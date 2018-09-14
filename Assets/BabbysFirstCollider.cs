@@ -2,6 +2,8 @@
 
 public abstract class BabbysFirstCollider : MonoBehaviour {
 
+	public float friction = 0.25f;
+
 	protected virtual void Awake(){
 		CollisionManager.RegisterCollider(this);
 	}

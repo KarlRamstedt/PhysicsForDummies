@@ -5,6 +5,7 @@ using UnityEngine;
 public class CollisionManager : MonoBehaviour {
 
 	public static Vector2 gravity = new Vector2(0f, -9.82f);
+//	public static float dampingFactor = 0.25f;
 
 	static List<BabbysFirstCollider> colliders = new List<BabbysFirstCollider>();
 	static List<BabbysFirstRigidbody> rigidbodies = new List<BabbysFirstRigidbody>();
@@ -70,11 +71,36 @@ public class CollisionManager : MonoBehaviour {
 		var pos = _col.transform.position.ToVec2();
 		var otherPos = _col2.transform.position.ToVec2();
 
-		bool overlapping = pos.Distance(otherPos) < _col.radius + _col2.radius;
-		if (overlapping){
-			_col.GetComponent<BabbysFirstRigidbody>().velocity *= -1;
-			_col2.GetComponent<BabbysFirstRigidbody>().velocity *= -1;
-			//			var dir = pos - otherPos; //TODO: Do the offsets n' all that
+		if (pos.Distance(otherPos) < _col.radius + _col2.radius){ //if overlapping
+			var dir = (otherPos-pos).normalized;
+			var closestPointOnCircle1 = pos + dir * _col.radius;
+			var closestPointOnCircle2 = otherPos - dir * _col2.radius;
+			var collisionPoint = (closestPointOnCircle1 + closestPointOnCircle2)/2;
+			var offset1 = collisionPoint - closestPointOnCircle1;
+			var offset2 = collisionPoint - closestPointOnCircle2;
+
+			var rb1 = _col.GetComponent<BabbysFirstRigidbody>();
+			var rb2 = _col2.GetComponent<BabbysFirstRigidbody>();
+
+			//https://stackoverflow.com/questions/573084/how-to-calculate-bounce-angle
+			var perpendicularVelocity = Vector2.Dot(rb1.velocity, -dir)*-dir;
+			var paralellVelocity = rb1.velocity - perpendicularVelocity;
+			var finalFriction = 1 - (_col.friction + _col2.friction) / 2;
+			if (rb1 != null && !rb1.isKinematic){
+				if (rb2 != null && !rb2.isKinematic){
+					var massFrac = rb1.mass / rb2.mass;
+					rb1.transform.Translate(offset1 / massFrac, Space.World);
+					rb1.AddForce(paralellVelocity * finalFriction - perpendicularVelocity * 2 * massFrac, ForceMode.VelocityChange);
+				} else {
+					rb1.transform.Translate(offset1 * 2, Space.World);
+					rb1.AddForce(paralellVelocity * finalFriction - perpendicularVelocity * 2, ForceMode.VelocityChange);
+				}
+			} else {
+//				if (rb2 != null && !rb2.isKinematic) //TODO: Change velocity properly
+//					rb2.transform.Translate(offset2 / (rb2.mass / rb1.mass), Space.World);
+//				else
+//					rb2.transform.Translate(offset2*2, Space.World);
+			}
 		}
 	}
 
@@ -82,15 +108,45 @@ public class CollisionManager : MonoBehaviour {
 		var pos = _sphereCol.transform.position.ToVec2();
 		var otherPos = _boxCol.transform.position.ToVec2();
 
-		//Check clamped outer box coordinate | ALSO CONTACT POINT
-		var boxContactPointX = Mathf.Max(otherPos.x, Mathf.Min(pos.x, otherPos.x + _boxCol.size.x));
+		//Check clamped outer box coordinate | ALSO CONTACT POINT || https://yal.cc/rectangle-circle-intersection-test/
+		var boxContactPointX = Mathf.Max(otherPos.x, Mathf.Min(pos.x, otherPos.x + _boxCol.size.x)); //CHECK IF NEED TO CENTER
 		var boxContactPointY = Mathf.Max(otherPos.y, Mathf.Min(pos.y, otherPos.y + _boxCol.size.y));
-		var deltaX = pos.x - boxContactPointX;
-		var deltaY = pos.y - boxContactPointY;
+		var delta = new Vector2(pos.x - boxContactPointX, pos.y - boxContactPointY);
 
-		if (deltaX * deltaX + deltaY * deltaY < _sphereCol.radius * _sphereCol.radius){ //If distance to contact point is smaller than circle radius then they are in contact
-			var direction = (new Vector2(deltaX, deltaY)).normalized; //DIRECTION TO OFFSET FROM CONTACT POINT
+		if (delta.x * delta.x + delta.y * delta.y < _sphereCol.radius * _sphereCol.radius){ //If distance to contact point is smaller than circle radius then they are in contact
+//			var normal = delta.normalized;
+			var rb1 = _boxCol.GetComponent<BabbysFirstRigidbody>();
+			var rb2 = _sphereCol.GetComponent<BabbysFirstRigidbody>();
+
+			var normal = delta.normalized;
+			var finalFriction = 1 - (_boxCol.friction + _sphereCol.friction) / 2;
+
+			if (rb1 != null && !rb1.isKinematic){
+				var perpendicularVelocity = Vector2.Dot(rb1.velocity, normal)*normal;
+				var paralellVelocity = rb1.velocity - perpendicularVelocity;
+				if (rb2 != null && !rb2.isKinematic){
+					var massFrac = rb1.mass / rb2.mass;
+//					rb1.transform.Translate(offset1 / massFrac, Space.World);
+					rb1.AddForce(paralellVelocity * finalFriction - perpendicularVelocity * 2 * massFrac, ForceMode.VelocityChange);
+				} else {
+//					rb1.transform.Translate(offset1 * 2, Space.World);
+					rb1.AddForce(paralellVelocity * finalFriction - perpendicularVelocity * 2, ForceMode.VelocityChange);
+				}
+			} else {
+				var perpendicularVelocity = Vector2.Dot(rb1.velocity, normal)*normal;
+				var paralellVelocity = rb1.velocity - perpendicularVelocity;
+				//				if (rb2 != null && !rb2.isKinematic) //TODO: Change velocity properly
+				//					rb2.transform.Translate(offset2 / (rb2.mass / rb1.mass), Space.World);
+				//				else
+				//					rb2.transform.Translate(offset2*2, Space.World);
+			}
 		}
+	}
+
+	bool PointOverlapBox(Vector2 _point, BabbyBoxCollider _boxCol){
+		var insideX = _boxCol.transform.position.x - _boxCol.size.x < _point.x && _point.x < _boxCol.transform.position.x + _boxCol.size.x;
+		var insideY = _boxCol.transform.position.y-_boxCol.size.y < _point.y && _point.y < _boxCol.transform.position.y+_boxCol.size.y;
+		return insideX && insideY;
 	}
 }
 
@@ -101,6 +157,9 @@ public static class Vector2Extensions {
 	public static float Distance(this Vector2 _from, Vector2 _to){
 		var delta = _from - _to;
 		return Mathf.Sqrt(delta.x*delta.x + delta.y*delta.y);
+	}
+	public static Vector3 ToVec3(this Vector2 _vec2){
+		return new Vector3(_vec2.x, _vec2.y, 0f);
 	}
 }
 

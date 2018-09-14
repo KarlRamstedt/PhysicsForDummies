@@ -23,6 +23,26 @@ public class BabbysFirstRigidbody : MonoBehaviour {
 		CollisionManager.DeRegisterRigidbody(this);
 	}
 
+	public void AddForce(Vector2 _force, ForceMode _mode){
+		switch (_mode){
+			case ForceMode.Acceleration:
+				velocity += _force * Time.fixedDeltaTime; //Correct?
+				break;
+			case ForceMode.Force:
+				velocity += (_force / mass) * Time.fixedDeltaTime; //Correct?
+				break;
+			case ForceMode.Impulse:
+				velocity += _force / mass; //Correct?
+				break;
+			case ForceMode.VelocityChange:
+				velocity += _force;
+				break;
+			default:
+				Debug.LogWarning("Unsupported ForceMode");
+				break;
+		}
+	}
+
 	public void UpdatePosition(){
 		if (kinematic)
 			return;

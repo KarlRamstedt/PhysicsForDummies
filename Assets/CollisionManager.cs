@@ -37,7 +37,7 @@ public class CollisionManager : MonoBehaviour {
 		}
 	}
 
-	public static void CalculateCollision(BabbysFirstCollider _col1, BabbysFirstCollider _col2){
+	public void CalculateCollision(BabbysFirstCollider _col1, BabbysFirstCollider _col2){
 		if (_col1.GetType() == typeof(BabbyBoxCollider)){
 			var col1 = _col1 as BabbyBoxCollider;
 
@@ -59,7 +59,6 @@ public class CollisionManager : MonoBehaviour {
 				var col2 = _col2 as BabbySphereCollider;
 				SphereSphere(col1, col2);
 			}
-
 		}
 	}
 
@@ -86,66 +85,97 @@ public class CollisionManager : MonoBehaviour {
 			var perpendicularVelocity = Vector2.Dot(rb1.velocity, -dir)*-dir;
 			var paralellVelocity = rb1.velocity - perpendicularVelocity;
 			var finalFriction = 1 - (_col.friction + _col2.friction) / 2;
+			var finalBounciness = (_col.bounciness + _col2.bounciness) / 2;
 			if (rb1 != null && !rb1.isKinematic){
 				if (rb2 != null && !rb2.isKinematic){
 					var massFrac = rb1.mass / rb2.mass;
 					rb1.transform.Translate(offset1 / massFrac, Space.World);
-					rb1.AddForce(paralellVelocity * finalFriction - perpendicularVelocity * 2 * massFrac, ForceMode.VelocityChange);
+					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * massFrac * finalBounciness;
+					rb2.transform.Translate(-offset1 / massFrac, Space.World);
+					rb2.velocity = -paralellVelocity * finalFriction + perpendicularVelocity * massFrac * finalBounciness; //TODO: Do proper mass-dependent calc
 				} else {
 					rb1.transform.Translate(offset1 * 2, Space.World);
-					rb1.AddForce(paralellVelocity * finalFriction - perpendicularVelocity * 2, ForceMode.VelocityChange);
+					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
 				}
 			} else {
-//				if (rb2 != null && !rb2.isKinematic) //TODO: Change velocity properly
-//					rb2.transform.Translate(offset2 / (rb2.mass / rb1.mass), Space.World);
-//				else
-//					rb2.transform.Translate(offset2*2, Space.World);
+				if (rb2 != null && !rb2.isKinematic){
+					rb1.transform.Translate(offset1 * 2, Space.World);
+					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
+				}
 			}
 		}
 	}
 
-	public static void BoxSphere(BabbyBoxCollider _boxCol, BabbySphereCollider _sphereCol){
-		var pos = _sphereCol.transform.position.ToVec2();
-		var otherPos = _boxCol.transform.position.ToVec2();
+	public void BoxSphere(BabbyBoxCollider _boxCol, BabbySphereCollider _sphereCol){
+		var spherePos = _sphereCol.transform.position.ToVec2();
+		var boxPos = _boxCol.transform.position.ToVec2();
 
 		//Check clamped outer box coordinate | ALSO CONTACT POINT || https://yal.cc/rectangle-circle-intersection-test/
-		var boxContactPointX = Mathf.Max(otherPos.x, Mathf.Min(pos.x, otherPos.x + _boxCol.size.x)); //CHECK IF NEED TO CENTER
-		var boxContactPointY = Mathf.Max(otherPos.y, Mathf.Min(pos.y, otherPos.y + _boxCol.size.y));
-		var delta = new Vector2(pos.x - boxContactPointX, pos.y - boxContactPointY);
+		var boxContactPointX = Mathf.Max(boxPos.x-_boxCol.bounds.x, Mathf.Min(spherePos.x, boxPos.x + _boxCol.bounds.x)); //CHECK IF NEED TO CENTER
+		var boxContactPointY = Mathf.Max(boxPos.y-_boxCol.bounds.y, Mathf.Min(spherePos.y, boxPos.y + _boxCol.bounds.y));
+		var delta = new Vector2(spherePos.x - boxContactPointX, spherePos.y - boxContactPointY); //Delta to circle
 
 		if (delta.x * delta.x + delta.y * delta.y < _sphereCol.radius * _sphereCol.radius){ //If distance to contact point is smaller than circle radius then they are in contact
-//			var normal = delta.normalized;
-			var rb1 = _boxCol.GetComponent<BabbysFirstRigidbody>();
-			var rb2 = _sphereCol.GetComponent<BabbysFirstRigidbody>();
+			var boxRB = _boxCol.GetComponent<BabbysFirstRigidbody>();
+			var sphereRB = _sphereCol.GetComponent<BabbysFirstRigidbody>();
 
 			var normal = delta.normalized;
 			var finalFriction = 1 - (_boxCol.friction + _sphereCol.friction) / 2;
+			var finalBounciness = (_boxCol.bounciness + _sphereCol.bounciness) / 2;
 
-			if (rb1 != null && !rb1.isKinematic){
-				var perpendicularVelocity = Vector2.Dot(rb1.velocity, normal)*normal;
-				var paralellVelocity = rb1.velocity - perpendicularVelocity;
-				if (rb2 != null && !rb2.isKinematic){
-					var massFrac = rb1.mass / rb2.mass;
-//					rb1.transform.Translate(offset1 / massFrac, Space.World);
-					rb1.AddForce(paralellVelocity * finalFriction - perpendicularVelocity * 2 * massFrac, ForceMode.VelocityChange);
+			var closestPointOnCircle = spherePos - normal.normalized * _sphereCol.radius;
+			var offset = new Vector2(boxContactPointX, boxContactPointY) - closestPointOnCircle; //ALSO NORMAL? | NOT ROBUST, WILL GENERATE WRONG NUMBERS IF SPHERE CENTER OVERLAPS BOX
+
+//			if (PointOverlapBox(spherePos, _boxCol)){ //TODO: set differently when sphere center overlaps box
+//				offset = -offset + offset.normalized * _sphereCol.radius;
+//			}
+			if (boxRB != null && !boxRB.isKinematic){
+				if (sphereRB != null && !sphereRB.isKinematic){
+					var massFrac = boxRB.mass / sphereRB.mass;
+					boxRB.transform.Translate(-offset * massFrac, Space.World);
+					//RECALC DELTA FOR CORRECT NORMAL AFTER OFFSET
+					boxContactPointX = Mathf.Max(boxPos.x-_boxCol.bounds.x, Mathf.Min(spherePos.x, boxPos.x + _boxCol.bounds.x)); //CHECK IF NEED TO CENTER
+					boxContactPointY = Mathf.Max(boxPos.y-_boxCol.bounds.y, Mathf.Min(spherePos.y, boxPos.y + _boxCol.bounds.y));
+
+					delta = new Vector2(spherePos.x - boxContactPointX, spherePos.y - boxContactPointY);
+					normal = delta.normalized;
+
+					var perpendicularVelocity = Vector2.Dot(-boxRB.velocity, normal)*normal;
+					var paralellVelocity = -boxRB.velocity - perpendicularVelocity;
+
+					boxRB.velocity = paralellVelocity * finalFriction - perpendicularVelocity * massFrac * finalBounciness;
 				} else {
-//					rb1.transform.Translate(offset1 * 2, Space.World);
-					rb1.AddForce(paralellVelocity * finalFriction - perpendicularVelocity * 2, ForceMode.VelocityChange);
+					boxRB.transform.Translate(-offset, Space.World);
+					boxContactPointX = Mathf.Max(boxPos.x-_boxCol.bounds.x, Mathf.Min(spherePos.x, boxPos.x + _boxCol.bounds.x)); //CHECK IF NEED TO CENTER
+					boxContactPointY = Mathf.Max(boxPos.y-_boxCol.bounds.y, Mathf.Min(spherePos.y, boxPos.y + _boxCol.bounds.y));
+					delta = new Vector2(spherePos.x - boxContactPointX, spherePos.y - boxContactPointY);
+					normal = delta.normalized;
+
+					var perpendicularVelocity = Vector2.Dot(-boxRB.velocity, normal)*normal;
+					var paralellVelocity = -boxRB.velocity - perpendicularVelocity;
+
+					boxRB.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
 				}
 			} else {
-				var perpendicularVelocity = Vector2.Dot(rb1.velocity, normal)*normal;
-				var paralellVelocity = rb1.velocity - perpendicularVelocity;
-				//				if (rb2 != null && !rb2.isKinematic) //TODO: Change velocity properly
-				//					rb2.transform.Translate(offset2 / (rb2.mass / rb1.mass), Space.World);
-				//				else
-				//					rb2.transform.Translate(offset2*2, Space.World);
+				if (sphereRB != null && !sphereRB.isKinematic){
+					sphereRB.transform.Translate(offset, Space.World);
+					boxContactPointX = Mathf.Max(boxPos.x-_boxCol.bounds.x, Mathf.Min(spherePos.x, boxPos.x + _boxCol.bounds.x)); //CHECK IF NEED TO CENTER
+					boxContactPointY = Mathf.Max(boxPos.y-_boxCol.bounds.y, Mathf.Min(spherePos.y, boxPos.y + _boxCol.bounds.y));
+					delta = new Vector2(spherePos.x - boxContactPointX, spherePos.y - boxContactPointY);
+					normal = delta.normalized;
+				
+					var perpendicularVelocity = Vector2.Dot(sphereRB.velocity, normal) * normal;
+					var paralellVelocity = sphereRB.velocity - perpendicularVelocity;
+
+					sphereRB.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
+				}
 			}
 		}
 	}
 
 	bool PointOverlapBox(Vector2 _point, BabbyBoxCollider _boxCol){
-		var insideX = _boxCol.transform.position.x - _boxCol.size.x < _point.x && _point.x < _boxCol.transform.position.x + _boxCol.size.x;
-		var insideY = _boxCol.transform.position.y-_boxCol.size.y < _point.y && _point.y < _boxCol.transform.position.y+_boxCol.size.y;
+		var insideX = _boxCol.transform.position.x - _boxCol.bounds.x < _point.x && _point.x < _boxCol.transform.position.x + _boxCol.bounds.x;
+		var insideY = _boxCol.transform.position.y-_boxCol.bounds.y < _point.y && _point.y < _boxCol.transform.position.y+_boxCol.bounds.y;
 		return insideX && insideY;
 	}
 }
@@ -158,6 +188,9 @@ public static class Vector2Extensions {
 		var delta = _from - _to;
 		return Mathf.Sqrt(delta.x*delta.x + delta.y*delta.y);
 	}
+	/// <summary>
+	/// Simple vector2 to 3 conversion, using z = 0.
+	/// </summary>
 	public static Vector3 ToVec3(this Vector2 _vec2){
 		return new Vector3(_vec2.x, _vec2.y, 0f);
 	}

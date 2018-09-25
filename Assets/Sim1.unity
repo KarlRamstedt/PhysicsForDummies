@@ -158,6 +158,7 @@ GameObject:
   - component: {fileID: 45236143}
   - component: {fileID: 45236142}
   - component: {fileID: 45236141}
+  - component: {fileID: 45236148}
   - component: {fileID: 45236145}
   - component: {fileID: 45236146}
   - component: {fileID: 45236147}
@@ -250,11 +251,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 45236140}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e5533cc872f09fc4cbcf59f8c4bc66c3, type: 3}
+  m_Script: {fileID: 11500000, guid: a0d041e24a1da7446bc8ddfefc44beeb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rb: {fileID: 454757857}
-  mat: {fileID: 2100000, guid: 6a06d3aeb323ef749bbffb5a6623c148, type: 2}
 --- !u!120 &45236147
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -343,6 +343,17 @@ LineRenderer:
     generateLightingData: 0
   m_UseWorldSpace: 1
   m_Loop: 0
+--- !u!114 &45236148
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 45236140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e29d3f3b2b40fb4b8d2fe672697fc44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &148669824
 GameObject:
   m_ObjectHideFlags: 0

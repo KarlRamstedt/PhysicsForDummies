@@ -7,8 +7,8 @@ public class CollisionManager : MonoBehaviour {
 	public static Vector2 gravity = new Vector2(0f, -9.82f);
 //	public static float dampingFactor = 0.25f;
 
-	static List<BabbysFirstCollider> colliders = new List<BabbysFirstCollider>();
-	static List<BabbysFirstRigidbody> rigidbodies = new List<BabbysFirstRigidbody>();
+	public static List<BabbysFirstCollider> colliders = new List<BabbysFirstCollider>();
+	public static List<BabbysFirstRigidbody> rigidbodies = new List<BabbysFirstRigidbody>();
 
 	public static void RegisterCollider(BabbysFirstCollider _col){
 		if (!colliders.Contains(_col))

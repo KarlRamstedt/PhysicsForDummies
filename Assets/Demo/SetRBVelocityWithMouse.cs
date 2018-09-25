@@ -1,11 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class SetRBVelocityWithMouse : MonoBehaviour {
 
 	public BabbysFirstRigidbody rb;
-	public Material mat;
 	LineRenderer lr;
 	Vector3 point;
 
@@ -15,14 +12,6 @@ public class SetRBVelocityWithMouse : MonoBehaviour {
 	}
 
 	void Update(){
-		if (Input.GetKeyDown(KeyCode.Escape)){
-			Application.Quit();
-#if UNITY_EDITOR
-			UnityEditor.EditorApplication.isPlaying = false;
-#endif
-		}
-		if (Input.GetKeyDown(KeyCode.R))
-			UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
 		point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		point.z = 0;
 		lr.SetPosition(0, rb.transform.position);

@@ -106,14 +106,20 @@ public class CollisionManager : MonoBehaviour {
 		}
 	}
 
+	public Vector2 GetBoxContactPoint(Vector2 _boxPos, Vector2 _otherPos, BabbyBoxCollider _boxCol){
+		Vector2 boxContactPoint;
+		boxContactPoint.x = Mathf.Max(_boxPos.x-_boxCol.bounds.x, Mathf.Min(_otherPos.x, _boxPos.x + _boxCol.bounds.x)); //CHECK IF NEED TO CENTER
+		boxContactPoint.y = Mathf.Max(_boxPos.y-_boxCol.bounds.y, Mathf.Min(_otherPos.y, _boxPos.y + _boxCol.bounds.y));
+		return boxContactPoint;
+	}
+
 	public void BoxSphere(BabbyBoxCollider _boxCol, BabbySphereCollider _sphereCol){
 		var spherePos = _sphereCol.transform.position.ToVec2();
 		var boxPos = _boxCol.transform.position.ToVec2();
 
 		//Check clamped outer box coordinate | ALSO CONTACT POINT || https://yal.cc/rectangle-circle-intersection-test/
-		var boxContactPointX = Mathf.Max(boxPos.x-_boxCol.bounds.x, Mathf.Min(spherePos.x, boxPos.x + _boxCol.bounds.x)); //CHECK IF NEED TO CENTER
-		var boxContactPointY = Mathf.Max(boxPos.y-_boxCol.bounds.y, Mathf.Min(spherePos.y, boxPos.y + _boxCol.bounds.y));
-		var delta = new Vector2(spherePos.x - boxContactPointX, spherePos.y - boxContactPointY); //Delta to circle
+		var boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol); //CHECK IF NEED TO CENTER
+		var delta = spherePos - boxContactPoint; //Delta to circle
 
 		if (delta.x * delta.x + delta.y * delta.y < _sphereCol.radius * _sphereCol.radius){ //If distance to contact point is smaller than circle radius then they are in contact
 			var boxRB = _boxCol.GetComponent<BabbysFirstRigidbody>();
@@ -123,21 +129,29 @@ public class CollisionManager : MonoBehaviour {
 			var finalFriction = 1 - (_boxCol.friction + _sphereCol.friction) / 2;
 			var finalBounciness = (_boxCol.bounciness + _sphereCol.bounciness) / 2;
 
-			var closestPointOnCircle = spherePos - normal.normalized * _sphereCol.radius;
-			var offset = new Vector2(boxContactPointX, boxContactPointY) - closestPointOnCircle; //ALSO NORMAL? | NOT ROBUST, WILL GENERATE WRONG NUMBERS IF SPHERE CENTER OVERLAPS BOX
+			Vector2 closestPointOnCircle;
+			if (PointOverlapBox(spherePos, _boxCol)){ //TODO: set differently when sphere center overlaps box
+				var dir = (spherePos - boxPos).normalized;
+				spherePos = dir * (_boxCol.bounds.x + _boxCol.bounds.y + _sphereCol.radius); //Offset sphere outside box
+				boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
+				normal = (spherePos - boxContactPoint).normalized;
+				closestPointOnCircle = spherePos -normal.normalized * _sphereCol.radius;
+				spherePos += boxContactPoint - closestPointOnCircle;
+			}
 
-//			if (PointOverlapBox(spherePos, _boxCol)){ //TODO: set differently when sphere center overlaps box
-//				offset = -offset + offset.normalized * _sphereCol.radius;
-//			}
+			closestPointOnCircle = spherePos - normal.normalized * _sphereCol.radius;
+			var offset = boxContactPoint - closestPointOnCircle; //ALSO NORMAL? | NOT ROBUST, WILL GENERATE WRONG NUMBERS IF SPHERE CENTER OVERLAPS BOX
+			Debug.Log(offset);
+			Debug.DrawLine(spherePos, spherePos + offset);
+
 			if (boxRB != null && !boxRB.isKinematic){
 				if (sphereRB != null && !sphereRB.isKinematic){
 					var massFrac = boxRB.mass / sphereRB.mass;
-					boxRB.transform.Translate(-offset * massFrac, Space.World);
+					boxRB.transform.position = spherePos + -offset * massFrac;
 					//RECALC DELTA FOR CORRECT NORMAL AFTER OFFSET
-					boxContactPointX = Mathf.Max(boxPos.x-_boxCol.bounds.x, Mathf.Min(spherePos.x, boxPos.x + _boxCol.bounds.x)); //CHECK IF NEED TO CENTER
-					boxContactPointY = Mathf.Max(boxPos.y-_boxCol.bounds.y, Mathf.Min(spherePos.y, boxPos.y + _boxCol.bounds.y));
+					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
 
-					delta = new Vector2(spherePos.x - boxContactPointX, spherePos.y - boxContactPointY);
+					delta = spherePos - boxContactPoint;
 					normal = delta.normalized;
 
 					var perpendicularVelocity = Vector2.Dot(-boxRB.velocity, normal)*normal;
@@ -146,9 +160,8 @@ public class CollisionManager : MonoBehaviour {
 					boxRB.velocity = paralellVelocity * finalFriction - perpendicularVelocity * massFrac * finalBounciness;
 				} else {
 					boxRB.transform.Translate(-offset, Space.World);
-					boxContactPointX = Mathf.Max(boxPos.x-_boxCol.bounds.x, Mathf.Min(spherePos.x, boxPos.x + _boxCol.bounds.x)); //CHECK IF NEED TO CENTER
-					boxContactPointY = Mathf.Max(boxPos.y-_boxCol.bounds.y, Mathf.Min(spherePos.y, boxPos.y + _boxCol.bounds.y));
-					delta = new Vector2(spherePos.x - boxContactPointX, spherePos.y - boxContactPointY);
+					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
+					delta = spherePos - boxContactPoint;
 					normal = delta.normalized;
 
 					var perpendicularVelocity = Vector2.Dot(-boxRB.velocity, normal)*normal;
@@ -159,9 +172,8 @@ public class CollisionManager : MonoBehaviour {
 			} else {
 				if (sphereRB != null && !sphereRB.isKinematic){
 					sphereRB.transform.Translate(offset, Space.World);
-					boxContactPointX = Mathf.Max(boxPos.x-_boxCol.bounds.x, Mathf.Min(spherePos.x, boxPos.x + _boxCol.bounds.x)); //CHECK IF NEED TO CENTER
-					boxContactPointY = Mathf.Max(boxPos.y-_boxCol.bounds.y, Mathf.Min(spherePos.y, boxPos.y + _boxCol.bounds.y));
-					delta = new Vector2(spherePos.x - boxContactPointX, spherePos.y - boxContactPointY);
+					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
+					delta = spherePos - boxContactPoint;
 					normal = delta.normalized;
 				
 					var perpendicularVelocity = Vector2.Dot(sphereRB.velocity, normal) * normal;
@@ -174,8 +186,8 @@ public class CollisionManager : MonoBehaviour {
 	}
 
 	bool PointOverlapBox(Vector2 _point, BabbyBoxCollider _boxCol){
-		var insideX = _boxCol.transform.position.x - _boxCol.bounds.x < _point.x && _point.x < _boxCol.transform.position.x + _boxCol.bounds.x;
-		var insideY = _boxCol.transform.position.y-_boxCol.bounds.y < _point.y && _point.y < _boxCol.transform.position.y+_boxCol.bounds.y;
+		var insideX = _boxCol.transform.position.x - _boxCol.transform.lossyScale.x/2 < _point.x && _point.x < _boxCol.transform.position.x + _boxCol.transform.lossyScale.x/2;
+		var insideY = _boxCol.transform.position.y-_boxCol.transform.lossyScale.y/2 < _point.y && _point.y < _boxCol.transform.position.y+_boxCol.transform.lossyScale.y/2;
 		return insideX && insideY;
 	}
 }

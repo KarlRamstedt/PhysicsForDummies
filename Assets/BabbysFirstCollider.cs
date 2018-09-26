@@ -12,6 +12,8 @@ public abstract class BabbysFirstCollider : MonoBehaviour {
 		CollisionManager.DeRegisterCollider(this);
 	}
 
+	public abstract Vector2 ClosestPoint();
+
 	protected virtual void OnDrawGizmos(){
 		Gizmos.color = Color.green;
 	}

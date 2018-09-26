@@ -141,7 +141,6 @@ public class CollisionManager : MonoBehaviour {
 
 			closestPointOnCircle = spherePos - normal.normalized * _sphereCol.radius;
 			var offset = boxContactPoint - closestPointOnCircle; //ALSO NORMAL? | NOT ROBUST, WILL GENERATE WRONG NUMBERS IF SPHERE CENTER OVERLAPS BOX
-			Debug.Log(offset);
 			Debug.DrawLine(spherePos, spherePos + offset);
 
 			if (boxRB != null && !boxRB.isKinematic){

@@ -6,6 +6,10 @@ public class BabbyMeshCollider : BabbysFirstCollider {
 //		return false;
 //	}
 
+	public override Vector2 ClosestPoint(){
+		return Vector2.zero;
+	}
+
 	protected new void OnDrawGizmos(){
 		base.OnDrawGizmos();
 		var meh = GetComponent<MeshFilter>().mesh;

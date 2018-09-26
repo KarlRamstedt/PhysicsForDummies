@@ -4,6 +4,10 @@ public class BabbySphereCollider : BabbysFirstCollider {
 
 	public float radius = 0.5f; //The only relevant physics part, rest is just for drawing the circle
 
+	public override Vector2 ClosestPoint(){
+		return Vector2.zero;
+	}
+
 //	public override bool Overlapping(BabbysFirstCollider _otherCol){
 //		if (_otherCol.GetType() == typeof(BabbyBoxCollider)){
 //			var otherBox = _otherCol as BabbyBoxCollider;

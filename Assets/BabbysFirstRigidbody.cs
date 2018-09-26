@@ -5,17 +5,8 @@ public class BabbysFirstRigidbody : MonoBehaviour {
 	public Vector2 velocity = Vector2.zero;
 	public float mass = 1f;
 	public bool useGravity = true;
-	public bool isKinematic {
-		get { return kinematic; }
-		set {
-			if (value){
-				velocity = Vector2.zero;
-			}
-			kinematic = value;
-		}
-	}
+	public bool isKinematic = false;
 	Vector2 forces = Vector2.zero;
-	bool kinematic = false;
 
 	void Awake(){
 		CollisionManager.RegisterRigidbody(this);
@@ -29,14 +20,14 @@ public class BabbysFirstRigidbody : MonoBehaviour {
 			case ForceMode.Acceleration:
 				velocity += _force * Time.fixedDeltaTime; //Correct?
 				break;
-			case ForceMode.Force:
-				forces += _force * Time.fixedDeltaTime; //Correct?
-				break;
-			case ForceMode.Impulse:
-				forces += _force; //Correct?
-				break;
 			case ForceMode.VelocityChange:
 				velocity += _force;
+				break;
+			case ForceMode.Force:
+				forces += _force; //Correct?
+				break;
+			case ForceMode.Impulse:
+				forces += _force / Time.fixedDeltaTime; //Correct?
 				break;
 			default:
 				Debug.LogWarning("Unsupported ForceMode");
@@ -45,8 +36,10 @@ public class BabbysFirstRigidbody : MonoBehaviour {
 	}
 
 	public void UpdatePosition(){
-		if (kinematic)
+		if (isKinematic){
+			velocity = Vector2.zero;
 			return;
+		}
 		var timeDelta = Time.fixedDeltaTime;
 		if (useGravity)
 			velocity += CollisionManager.gravity * timeDelta; //Convert gravity acceleration to velocity and add to total velocity

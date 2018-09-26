@@ -4,8 +4,12 @@ public class BabbyBoxCollider : BabbysFirstCollider {
 
 	public Vector2 bounds;
 
-	void Start(){
+	void Awake(){
 		bounds = transform.lossyScale.ToVec2()/2;
+	}
+
+	public override Vector2 ClosestPoint(){
+		return Vector2.zero;
 	}
 
 	protected override void OnDrawGizmos(){

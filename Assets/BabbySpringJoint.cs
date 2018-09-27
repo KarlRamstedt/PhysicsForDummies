@@ -15,19 +15,22 @@ public class BabbySpringJoint : MonoBehaviour {
             return;
 
         var rb = GetComponent<BabbysFirstRigidbody>();
+		var totalDamp = damping / 2 * Mathf.Sqrt(springConstant * rb.mass);
 		float lengthDelta = delta.magnitude - restingLength;
 		delta = delta.normalized * lengthDelta;
+		var force = delta * springConstant;
 
-		if (!rb.isKinematic && !connectedBody.isKinematic){
+		if (!rb.isKinematic && !connectedBody.isKinematic){ //TODO: USE MASS IN CALCULATION && FIX HANDLING FOR HIGH DAMPING VALUES
 			var dampingRatio = (connectedBody.velocity - rb.velocity) * damping; //Relative velocity * damping factor
-			rb.AddForce(delta * springConstant * (rb.mass / connectedBody.mass) + dampingRatio, ForceMode.Force);
-			connectedBody.AddForce(-delta * springConstant * (connectedBody.mass / rb.mass) - dampingRatio, ForceMode.Force);
+			var forceMag = force.magnitude;
+			rb.AddForce(Vector2.ClampMagnitude(force + dampingRatio, forceMag), ForceMode.Force); //Make sure damping can't put force into negatives
+			connectedBody.AddForce(Vector2.ClampMagnitude(-force - dampingRatio, forceMag), ForceMode.Force);
 		} else if (rb.isKinematic){
 			var dampingRatio = connectedBody.velocity * damping;
-			connectedBody.AddForce(-delta * springConstant - dampingRatio, ForceMode.Force); //TODO: DAMP
+			connectedBody.AddForce(Vector2.ClampMagnitude(-force - dampingRatio, force.magnitude), ForceMode.Force);
 		} else if (connectedBody.isKinematic){
-			var dampingRatio = rb.velocity * damping;
-			rb.AddForce(delta * springConstant - dampingRatio, ForceMode.Force); //TODO: DAMP
+			var dampingRatio = rb.velocity * damping; //TODO: FIX
+			rb.AddForce(Vector2.ClampMagnitude(force - dampingRatio, force.magnitude), ForceMode.Force);
 		}
 	}
 }

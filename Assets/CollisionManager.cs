@@ -7,21 +7,47 @@ public class CollisionManager : MonoBehaviour {
 	public static Vector2 gravity = new Vector2(0f, -9.82f);
 //	public static float dampingFactor = 0.25f;
 
-	public static List<BabbysFirstCollider> colliders = new List<BabbysFirstCollider>();
-	public static List<BabbysFirstRigidbody> rigidbodies = new List<BabbysFirstRigidbody>();
+	public List<BabbysFirstCollider> colliders = new List<BabbysFirstCollider>();
+	public List<BabbysFirstRigidbody> rigidbodies = new List<BabbysFirstRigidbody>();
 
-	public static void RegisterCollider(BabbysFirstCollider _col){
+#region Singleton
+	static protected CollisionManager instance;
+	public static CollisionManager Inst {
+		get {
+			if (instance == null){ //Lazy-load object or create it in case somebody forgot to add it to the scene
+				if (applicationIsQuitting)
+					return null;
+				GameObject go = new GameObject("(Singleton) CollisionManager"); //Optionally enter a more descriptive object name
+				go.AddComponent<CollisionManager>(); //AddComponent runs awake function before continuing
+				DontDestroyOnLoad(go);
+			}
+			return instance;
+		}
+	}
+	void Awake(){
+		if (instance == null)
+			instance = this;
+		else if (instance != this)
+			throw new System.InvalidOperationException("[Singleton] More than 1 CollisionManager instance exists.");
+	}
+	public static bool applicationIsQuitting = false;
+	void OnDestroy(){
+		applicationIsQuitting = true;
+	}
+#endregion
+
+	public void RegisterCollider(BabbysFirstCollider _col){
 		if (!colliders.Contains(_col))
 			colliders.Add(_col);
 	}
-	public static void DeRegisterCollider(BabbysFirstCollider _col){
+	public void DeRegisterCollider(BabbysFirstCollider _col){
 		colliders.Remove(_col);
 	}
-	public static void RegisterRigidbody(BabbysFirstRigidbody _col){
+	public void RegisterRigidbody(BabbysFirstRigidbody _col){
 		if (!rigidbodies.Contains(_col))
 			rigidbodies.Add(_col);
 	}
-	public static void DeRegisterRigidbody(BabbysFirstRigidbody _col){
+	public void DeRegisterRigidbody(BabbysFirstRigidbody _col){
 		rigidbodies.Remove(_col);
 	}
 	
@@ -72,8 +98,8 @@ public class CollisionManager : MonoBehaviour {
 
 		if (pos.Distance(otherPos) < _col.radius + _col2.radius){ //if overlapping
 			var dir = (otherPos-pos).normalized;
-			var closestPointOnCircle1 = pos + dir * _col.radius;
-			var closestPointOnCircle2 = otherPos - dir * _col2.radius;
+			var closestPointOnCircle1 = _col.ClosestPoint(otherPos);
+			var closestPointOnCircle2 = _col2.ClosestPoint(pos);
 			var collisionPoint = (closestPointOnCircle1 + closestPointOnCircle2)/2;
 			var offset1 = collisionPoint - closestPointOnCircle1;
 			var offset2 = collisionPoint - closestPointOnCircle2;
@@ -91,7 +117,7 @@ public class CollisionManager : MonoBehaviour {
 					var massFrac = rb1.mass / rb2.mass;
 					rb1.transform.Translate(offset1 / massFrac, Space.World);
 					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * massFrac * finalBounciness;
-					rb2.transform.Translate(-offset1 / massFrac, Space.World);
+					rb2.transform.Translate(offset2 / massFrac, Space.World);
 					rb2.velocity = -paralellVelocity * finalFriction + perpendicularVelocity * massFrac * finalBounciness; //TODO: Do proper mass-dependent calc
 				} else {
 					rb1.transform.Translate(offset1 * 2, Space.World);
@@ -99,8 +125,8 @@ public class CollisionManager : MonoBehaviour {
 				}
 			} else {
 				if (rb2 != null && !rb2.isKinematic){
-					rb1.transform.Translate(offset1 * 2, Space.World);
-					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
+					rb2.transform.Translate(offset2 * 2, Space.World);
+					rb2.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
 				}
 			}
 		}

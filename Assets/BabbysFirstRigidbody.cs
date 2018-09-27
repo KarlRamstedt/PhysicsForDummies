@@ -6,13 +6,15 @@ public class BabbysFirstRigidbody : MonoBehaviour {
 	public float mass = 1f;
 	public bool useGravity = true;
 	public bool isKinematic = false;
-	Vector2 forces = Vector2.zero;
 
-	void Awake(){
-		CollisionManager.RegisterRigidbody(this);
+	[HideInInspector] public Vector2 forces = Vector2.zero;
+
+	void OnEnable(){
+		CollisionManager.Inst.RegisterRigidbody(this);
 	}
-	void OnDestroy(){
-		CollisionManager.DeRegisterRigidbody(this);
+	void OnDisable(){
+		if (!CollisionManager.applicationIsQuitting)
+			CollisionManager.Inst.DeRegisterRigidbody(this);
 	}
 
 	public void AddForce(Vector2 _force, ForceMode _mode){ //F = mass * meters/seconds^2
@@ -33,6 +35,10 @@ public class BabbysFirstRigidbody : MonoBehaviour {
 				Debug.LogWarning("Unsupported ForceMode");
 				break;
 		}
+	}
+
+	public void ClearForce(){
+		forces = Vector2.zero;
 	}
 
 	public void UpdatePosition(){

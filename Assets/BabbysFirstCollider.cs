@@ -5,16 +5,18 @@ public abstract class BabbysFirstCollider : MonoBehaviour {
 	public float friction = 0.25f;
 	public float bounciness = 0.25f;
 
-	protected virtual void Awake(){
-		CollisionManager.RegisterCollider(this);
+	protected virtual void OnEnable(){
+		CollisionManager.Inst.RegisterCollider(this);
 	}
-	protected virtual void OnDestroy(){
-		CollisionManager.DeRegisterCollider(this);
+	protected virtual void OnDisable(){
+		if (!CollisionManager.applicationIsQuitting)
+			CollisionManager.Inst.DeRegisterCollider(this);
 	}
 
-	public abstract Vector2 ClosestPoint();
+	public abstract bool Overlapping(Vector2 _point);
+	public abstract Vector2 ClosestPoint(Vector2 _point);
 
-	protected virtual void OnDrawGizmos(){
+	protected virtual void OnDrawGizmosSelected(){
 		Gizmos.color = Color.green;
 	}
 }

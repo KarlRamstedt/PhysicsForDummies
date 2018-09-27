@@ -6,5 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/main.unity
+    path: Assets/Sim1.unity
     guid: c53b7172ef87a3642ac0348016fced88
+  - enabled: 1
+    path: Assets/Sim2.unity
+    guid: 638fd4cd8ce30dc49b5305a685a27aa8

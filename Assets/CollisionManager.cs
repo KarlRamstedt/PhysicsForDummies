@@ -11,7 +11,7 @@ public class CollisionManager : MonoBehaviour {
 	public List<BabbysFirstRigidbody> rigidbodies = new List<BabbysFirstRigidbody>();
 
 #region Singleton
-	static protected CollisionManager instance;
+	static CollisionManager instance;
 	public static CollisionManager Inst {
 		get {
 			if (instance == null){ //Lazy-load object or create it in case somebody forgot to add it to the scene
@@ -134,8 +134,8 @@ public class CollisionManager : MonoBehaviour {
 
 	public Vector2 GetBoxContactPoint(Vector2 _boxPos, Vector2 _otherPos, BabbyBoxCollider _boxCol){
 		Vector2 boxContactPoint;
-		boxContactPoint.x = Mathf.Max(_boxPos.x-_boxCol.bounds.x, Mathf.Min(_otherPos.x, _boxPos.x + _boxCol.bounds.x)); //CHECK IF NEED TO CENTER
-		boxContactPoint.y = Mathf.Max(_boxPos.y-_boxCol.bounds.y, Mathf.Min(_otherPos.y, _boxPos.y + _boxCol.bounds.y));
+		boxContactPoint.x = Mathf.Max(_boxPos.x-_boxCol.Bounds.x, Mathf.Min(_otherPos.x, _boxPos.x + _boxCol.Bounds.x)); //CHECK IF NEED TO CENTER
+		boxContactPoint.y = Mathf.Max(_boxPos.y-_boxCol.Bounds.y, Mathf.Min(_otherPos.y, _boxPos.y + _boxCol.Bounds.y));
 		return boxContactPoint;
 	}
 
@@ -156,9 +156,9 @@ public class CollisionManager : MonoBehaviour {
 			var finalBounciness = (_boxCol.bounciness + _sphereCol.bounciness) / 2;
 
 			Vector2 closestPointOnCircle;
-			if (PointOverlapBox(spherePos, _boxCol)){ //TODO: set differently when sphere center overlaps box
+			if (_boxCol.Overlapping(spherePos)){ //TODO: set differently when sphere center overlaps box
 				var dir = (spherePos - boxPos).normalized;
-				spherePos = dir * (_boxCol.bounds.x + _boxCol.bounds.y + _sphereCol.radius); //Offset sphere outside box
+				spherePos = dir * (_boxCol.Bounds.x + _boxCol.Bounds.y + _sphereCol.radius); //Offset sphere outside box
 				boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
 				normal = (spherePos - boxContactPoint).normalized;
 				closestPointOnCircle = spherePos -normal.normalized * _sphereCol.radius;

@@ -14,5 +14,7 @@ public class SceneLoader : MonoBehaviour {
 			UnityEngine.SceneManagement.SceneManager.LoadScene(0);
 		else if (Input.GetKeyDown(KeyCode.Alpha2))
 			UnityEngine.SceneManagement.SceneManager.LoadScene(1);
+		else if (Input.GetKeyDown(KeyCode.Alpha3))
+			UnityEngine.SceneManagement.SceneManager.LoadScene(2);
 	}
 }

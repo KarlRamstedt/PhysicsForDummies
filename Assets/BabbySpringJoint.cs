@@ -8,14 +8,17 @@ public class BabbySpringJoint : MonoBehaviour {
 	public float restingLength = 2;
     public float damping = 1f;
 
+	BabbysFirstRigidbody rb;
+	void Awake(){
+		rb = GetComponent<BabbysFirstRigidbody>();
+	}
+
 	void FixedUpdate(){ //F = k * x
 		var delta = connectedBody.transform.position.ToVec2() - transform.position.ToVec2();
 
         if (Mathf.Approximately(delta.magnitude, restingLength))
             return;
 
-        var rb = GetComponent<BabbysFirstRigidbody>();
-		var totalDamp = damping / 2 * Mathf.Sqrt(springConstant * rb.mass);
 		float lengthDelta = delta.magnitude - restingLength;
 		delta = delta.normalized * lengthDelta;
 		var force = delta * springConstant;

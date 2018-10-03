@@ -4,14 +4,14 @@
 public class DragColliderWithMouse : MonoBehaviour {
 
 	BabbySpringJoint joint;
-	Vector3 point;
 
 	void Start(){
 		joint = GetComponent<BabbySpringJoint>();
+		joint.enabled = false;
 	}
 
 	void Update(){
-		point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		var point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		point.z = 0;
 
 		if (Input.GetMouseButtonDown(0)){

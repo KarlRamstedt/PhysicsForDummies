@@ -6,8 +6,7 @@ public class DrawLineBetweenTwoObjects : MonoBehaviour {
 	public Transform other;
 
 	LineRenderer lr;
-
-	void Start(){
+	void Awake(){
 		lr = GetComponent<LineRenderer>();
 		lr.positionCount = 2;
 	}

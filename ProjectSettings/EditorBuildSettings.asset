@@ -11,3 +11,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Sim2.unity
     guid: 638fd4cd8ce30dc49b5305a685a27aa8
+  - enabled: 1
+    path: Assets/Sim3.unity
+    guid: 57d888251daec474b93e6cf22944d8b7

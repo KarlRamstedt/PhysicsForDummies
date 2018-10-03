@@ -290,8 +290,8 @@ GameObject:
   - component: {fileID: 291894074}
   - component: {fileID: 291894073}
   - component: {fileID: 291894072}
-  - component: {fileID: 291894071}
   - component: {fileID: 291894070}
+  - component: {fileID: 291894071}
   - component: {fileID: 291894069}
   - component: {fileID: 291894068}
   m_Layer: 0
@@ -431,7 +431,7 @@ MonoBehaviour:
   connectedBody: {fileID: 1514164318}
   springConstant: 9
   restingLength: 3
-  damping: 0.9
+  damping: 0.5
 --- !u!114 &291894072
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -531,7 +531,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
-  bounds: {x: 0.5, y: 0.5}
 --- !u!23 &542996072
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -597,8 +596,8 @@ GameObject:
   - component: {fileID: 765856723}
   - component: {fileID: 765856721}
   - component: {fileID: 765856727}
-  - component: {fileID: 765856726}
   - component: {fileID: 765856720}
+  - component: {fileID: 765856726}
   - component: {fileID: 765856725}
   - component: {fileID: 765856722}
   m_Layer: 0
@@ -790,9 +789,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 2054035833}
-  springConstant: 9
+  springConstant: 32
   restingLength: 3
-  damping: 0.9
+  damping: 0.5
 --- !u!114 &765856727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -838,7 +837,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
-  bounds: {x: 0.5, y: 0.5}
 --- !u!23 &800722715
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -956,7 +954,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
-  bounds: {x: 0.5, y: 0.5}
 --- !u!23 &1291301211
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1022,8 +1019,8 @@ GameObject:
   - component: {fileID: 1430623559}
   - component: {fileID: 1430623557}
   - component: {fileID: 1430623563}
-  - component: {fileID: 1430623562}
   - component: {fileID: 1430623561}
+  - component: {fileID: 1430623562}
   - component: {fileID: 1430623558}
   - component: {fileID: 1430623556}
   m_Layer: 0
@@ -1215,9 +1212,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 765856720}
-  springConstant: 9
+  springConstant: 32
   restingLength: 3
-  damping: 0
+  damping: 0.5
 --- !u!114 &1430623563
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1337,8 +1334,8 @@ GameObject:
   - component: {fileID: 1514164322}
   - component: {fileID: 1514164321}
   - component: {fileID: 1514164320}
-  - component: {fileID: 1514164319}
   - component: {fileID: 1514164318}
+  - component: {fileID: 1514164319}
   - component: {fileID: 1514164317}
   - component: {fileID: 1514164316}
   m_Layer: 0
@@ -1478,7 +1475,7 @@ MonoBehaviour:
   connectedBody: {fileID: 1617552705}
   springConstant: 9
   restingLength: 3
-  damping: 0
+  damping: 0.5
 --- !u!114 &1514164320
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1616,7 +1613,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Balls are draggable.
 
-    Press 1 or 2 to change scene.
+    Press 1, 2, 3 to change scene.
 
     Press R to reset level.
 
@@ -1658,7 +1655,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
-  bounds: {x: 0.5, y: 0.5}
 --- !u!23 &1597890240
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1724,8 +1720,8 @@ GameObject:
   - component: {fileID: 1617552711}
   - component: {fileID: 1617552710}
   - component: {fileID: 1617552709}
-  - component: {fileID: 1617552708}
   - component: {fileID: 1617552705}
+  - component: {fileID: 1617552708}
   - component: {fileID: 1617552707}
   - component: {fileID: 1617552706}
   m_Layer: 0
@@ -1742,7 +1738,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1617552703}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.19999981, y: 1.75, z: 0}
+  m_LocalPosition: {x: 1.63, y: 1.75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -1878,7 +1874,7 @@ MonoBehaviour:
   connectedBody: {fileID: 291894070}
   springConstant: 9
   restingLength: 3
-  damping: 0.9
+  damping: 0.5
 --- !u!114 &1617552709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1945,8 +1941,8 @@ GameObject:
   - component: {fileID: 2054035831}
   - component: {fileID: 2054035829}
   - component: {fileID: 2054035835}
-  - component: {fileID: 2054035834}
   - component: {fileID: 2054035833}
+  - component: {fileID: 2054035834}
   - component: {fileID: 2054035830}
   - component: {fileID: 2054035828}
   m_Layer: 0
@@ -2104,7 +2100,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2054035827}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.75, y: 1.75, z: 0}
+  m_LocalPosition: {x: 0, y: 1.75, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -2138,9 +2134,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 1430623561}
-  springConstant: 9
+  springConstant: 32
   restingLength: 3
-  damping: 0.9
+  damping: 0.5
 --- !u!114 &2054035835
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -468,7 +468,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
-  bounds: {x: 0.5, y: 0.5}
 --- !u!23 &212979955
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1642,7 +1641,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: 'Click left mouse button to set new velocity to red ball.
 
-    Press 1 or 2 to change scene.
+    Press 1, 2, 3 to change scene.
 
     Press R to reset level.
 
@@ -1684,7 +1683,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
-  bounds: {x: 0.5, y: 0.5}
 --- !u!23 &1715082472
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1844,7 +1842,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
-  bounds: {x: 0.5, y: 0.5}
 --- !u!23 &1813410637
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1930,7 +1927,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
-  bounds: {x: 0.5, y: 0.5}
 --- !u!23 &1817799272
 MeshRenderer:
   m_ObjectHideFlags: 0

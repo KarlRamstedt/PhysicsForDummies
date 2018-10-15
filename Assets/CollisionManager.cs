@@ -114,11 +114,12 @@ public class CollisionManager : MonoBehaviour {
 			var finalBounciness = (_col.bounciness + _col2.bounciness) / 2;
 			if (rb1 != null && !rb1.isKinematic){
 				if (rb2 != null && !rb2.isKinematic){
-					var massFrac = rb1.mass / rb2.mass;
-					rb1.transform.Translate(offset1 / massFrac, Space.World);
-					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * massFrac * finalBounciness;
-					rb2.transform.Translate(offset2 / massFrac, Space.World);
-					rb2.velocity = -paralellVelocity * finalFriction + perpendicularVelocity * massFrac * finalBounciness; //TODO: Do proper mass-dependent calc
+					var massFrac1 = Mathf.Clamp01(rb2.mass / rb1.mass);
+					rb1.transform.Translate(offset1 * massFrac1, Space.World);
+					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * massFrac1 * finalBounciness;
+					var massFrac2 = Mathf.Clamp01(rb1.mass / rb2.mass);
+					rb2.transform.Translate(offset2 * massFrac2, Space.World);
+					rb2.velocity = -paralellVelocity * finalFriction + perpendicularVelocity * massFrac2 * finalBounciness; //TODO: Do proper mass-dependent calc
 				} else {
 					rb1.transform.Translate(offset1 * 2, Space.World);
 					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;

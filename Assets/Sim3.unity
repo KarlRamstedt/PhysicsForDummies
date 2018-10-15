@@ -352,7 +352,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 9, y: -9}
-  m_SizeDelta: {x: 600, y: 100}
+  m_SizeDelta: {x: 999, y: 99}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &1580458192
 MonoBehaviour:
@@ -386,7 +386,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Click on balls to toggle gravitational pull.
+  m_Text: 'Click on balls to toggle gravitational pull on them (other balls are still
+    affected by them though).
 
     Press 1, 2, 3 to change scene.
 

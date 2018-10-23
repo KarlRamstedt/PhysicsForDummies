@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+public interface ICollisionCallback {
+	void OnCollisionEnter(BabbysFirstCollider _col);
+	void OnCollisionExit(BabbysFirstCollider _col);
+}
+
 public class CollisionManager : MonoBehaviour {
 
 	public static Vector2 gravity = new Vector2(0f, -9.82f);
-//	public static float dampingFactor = 0.25f;
 
 	public List<BabbysFirstCollider> colliders = new List<BabbysFirstCollider>();
 	public List<BabbysFirstRigidbody> rigidbodies = new List<BabbysFirstRigidbody>();
@@ -64,24 +68,24 @@ public class CollisionManager : MonoBehaviour {
 	}
 
 	public void CalculateCollision(BabbysFirstCollider _col1, BabbysFirstCollider _col2){
-		if (_col1.GetType() == typeof(BabbyBoxCollider)){
+		if (_col1 is BabbyBoxCollider){
 			var col1 = _col1 as BabbyBoxCollider;
 
-			if (_col2.GetType() == typeof(BabbyBoxCollider)){
+			if (_col2 is BabbyBoxCollider){
 				var col2 = _col2 as BabbyBoxCollider;
 				BoxBox(col1, col2);
-			} else if (_col2.GetType() == typeof(BabbySphereCollider)){
+			} else if (_col2 is BabbySphereCollider){
 				var col2 = _col2 as BabbySphereCollider;
 				BoxSphere(col1, col2);
 			}
 
-		} else if (_col1.GetType() == typeof(BabbySphereCollider)){
+		} else if (_col1 is BabbySphereCollider){
 			var col1 = _col1 as BabbySphereCollider;
 
-			if (_col2.GetType() == typeof(BabbyBoxCollider)){
+			if (_col2 is BabbyBoxCollider){
 				var col2 = _col2 as BabbyBoxCollider;
 				BoxSphere(col2, col1);
-			} else if (_col2.GetType() == typeof(BabbySphereCollider)){
+			} else if (_col2 is BabbySphereCollider){
 				var col2 = _col2 as BabbySphereCollider;
 				SphereSphere(col1, col2);
 			}
@@ -97,6 +101,10 @@ public class CollisionManager : MonoBehaviour {
 		var otherPos = _col2.transform.position.ToVec2();
 
 		if (pos.Distance(otherPos) < _col.radius + _col2.radius){ //if overlapping
+			CollisionCallbackCheck(_col, _col2);
+			if (_col.isTrigger || _col2.isTrigger)
+				return;
+			
 			var dir = (otherPos-pos).normalized;
 			var closestPointOnCircle1 = _col.ClosestPoint(otherPos);
 			var closestPointOnCircle2 = _col2.ClosestPoint(pos);
@@ -215,6 +223,20 @@ public class CollisionManager : MonoBehaviour {
 		var insideX = _boxCol.transform.position.x - _boxCol.transform.lossyScale.x/2 < _point.x && _point.x < _boxCol.transform.position.x + _boxCol.transform.lossyScale.x/2;
 		var insideY = _boxCol.transform.position.y-_boxCol.transform.lossyScale.y/2 < _point.y && _point.y < _boxCol.transform.position.y+_boxCol.transform.lossyScale.y/2;
 		return insideX && insideY;
+	}
+
+	static void CollisionCallbackCheck(BabbysFirstCollider _col, BabbysFirstCollider _col2){
+		if (_col.gameObject.GetComponent<Rigidbody>() != null || _col2.gameObject.GetComponent<Rigidbody>() != null){
+			var collisionCallbacks = _col.gameObject.GetComponents<ICollisionCallback>();
+			for (int i = 0; i < collisionCallbacks.Length; i++){
+				collisionCallbacks[i].OnCollisionEnter(_col2);
+//						collisionCallbacks[i].OnCollisionExit(_col2); //TODO: Exit callbacks
+			}
+			collisionCallbacks = _col2.gameObject.GetComponents<ICollisionCallback>();
+			for (int i = 0; i < collisionCallbacks.Length; i++){
+				collisionCallbacks[i].OnCollisionEnter(_col);
+			}
+		}
 	}
 }
 

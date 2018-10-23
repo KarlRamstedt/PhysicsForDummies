@@ -2,7 +2,7 @@
 
 public class BabbysFirstRigidbody : MonoBehaviour {
 
-	public Vector2 velocity = Vector2.zero;
+	public Vector2 velocity, angularVelocity = Vector2.zero;
 	public float mass = 1f;
 	public bool useGravity = true;
 	public bool isKinematic = false;
@@ -37,8 +37,29 @@ public class BabbysFirstRigidbody : MonoBehaviour {
 		}
 	}
 
+	public void AddForceAtPoint(Vector2 _force, ForceMode _mode, Vector2 _point){
+		switch (_mode){
+			case ForceMode.Acceleration:
+				velocity += _force * Time.fixedDeltaTime;
+				break;
+			case ForceMode.VelocityChange:
+				velocity += _force;
+				break;
+			case ForceMode.Force:
+				forces += _force;
+				break;
+			case ForceMode.Impulse:
+				forces += _force / Time.fixedDeltaTime;
+				break;
+			default:
+				Debug.LogWarning("Unsupported ForceMode");
+				break;
+		}
+	}
+
 	public void ClearForce(){
 		forces = Vector2.zero;
+		angularVelocity = Vector2.zero;
 	}
 
 	public void UpdatePosition(){

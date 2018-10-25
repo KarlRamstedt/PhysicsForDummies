@@ -143,6 +143,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0}
+  angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 0
   isKinematic: 1
@@ -400,7 +401,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6c9fbc57e42e84e9a2169ab2eb20f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  other: {fileID: 1514164323}
+  other:
+  - {fileID: 1514164323}
 --- !u!114 &291894070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -413,6 +415,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0}
+  angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 1
@@ -445,6 +448,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.25
+  isTrigger: 0
   radius: 1
 --- !u!23 &291894073
 MeshRenderer:
@@ -531,6 +535,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
+  isTrigger: 0
 --- !u!23 &542996072
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -619,6 +624,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0}
+  angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 0
@@ -776,7 +782,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6c9fbc57e42e84e9a2169ab2eb20f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  other: {fileID: 2054035832}
+  other:
+  - {fileID: 2054035832}
 --- !u!114 &765856726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -805,6 +812,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.25
+  isTrigger: 0
   radius: 0.5
 --- !u!1 &800722713
 GameObject:
@@ -837,6 +845,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
+  isTrigger: 0
 --- !u!23 &800722715
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -954,6 +963,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
+  isTrigger: 0
 --- !u!23 &1291301211
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1163,7 +1173,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6c9fbc57e42e84e9a2169ab2eb20f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  other: {fileID: 765856724}
+  other:
+  - {fileID: 765856724}
 --- !u!33 &1430623559
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -1196,6 +1207,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0}
+  angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 0
@@ -1228,6 +1240,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.25
+  isTrigger: 0
   radius: 0.5
 --- !u!1 &1453176436
 GameObject:
@@ -1444,7 +1457,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6c9fbc57e42e84e9a2169ab2eb20f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  other: {fileID: 1617552704}
+  other:
+  - {fileID: 1617552704}
 --- !u!114 &1514164318
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1457,6 +1471,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0}
+  angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 0
@@ -1489,6 +1504,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.25
+  isTrigger: 0
   radius: 0.5
 --- !u!23 &1514164321
 MeshRenderer:
@@ -1655,6 +1671,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.5
+  isTrigger: 0
 --- !u!23 &1597890240
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1756,6 +1773,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0}
+  angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 0
@@ -1859,7 +1877,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6c9fbc57e42e84e9a2169ab2eb20f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  other: {fileID: 291894075}
+  other:
+  - {fileID: 291894075}
 --- !u!114 &1617552708
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1888,6 +1907,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.25
+  isTrigger: 0
   radius: 0.5
 --- !u!23 &1617552710
 MeshRenderer:
@@ -2085,7 +2105,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a6c9fbc57e42e84e9a2169ab2eb20f9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  other: {fileID: 1430623560}
+  other:
+  - {fileID: 1430623560}
 --- !u!33 &2054035831
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -2118,6 +2139,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   velocity: {x: 0, y: 0}
+  angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 0
@@ -2150,4 +2172,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.25
+  isTrigger: 0
   radius: 0.5

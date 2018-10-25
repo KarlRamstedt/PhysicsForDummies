@@ -1,12 +1,19 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public interface ICollisionCallback {
-	void OnCollisionEnter(BabbysFirstCollider _col);
-	void OnCollisionExit(BabbysFirstCollider _col);
+public interface IEnterCallback {
+	void OnColEnter(BabbysFirstCollider _col);
+}
+public interface IStayCallback {
+	void OnColStay(BabbysFirstCollider _col);
+}
+public interface IExitCallback {
+	void OnColExit(BabbysFirstCollider _col);
 }
 
+/// <summary>
+/// Instantiated on demand, don't place in scene.
+/// </summary>
 public class CollisionManager : MonoBehaviour {
 
 	public static Vector2 gravity = new Vector2(0f, -9.82f);
@@ -14,12 +21,14 @@ public class CollisionManager : MonoBehaviour {
 	public List<BabbysFirstCollider> colliders = new List<BabbysFirstCollider>();
 	public List<BabbysFirstRigidbody> rigidbodies = new List<BabbysFirstRigidbody>();
 
+	Dictionary<GameObject, List<GameObject>> collisions = new Dictionary<GameObject, List<GameObject>>(); //Does order affect result? | CollisionExit will not run if object is disabled, is that a problem?
+
 #region Singleton
 	static CollisionManager instance;
 	public static CollisionManager Inst {
 		get {
 			if (instance == null){ //Lazy-load object or create it in case somebody forgot to add it to the scene
-				if (applicationIsQuitting)
+				if (ApplicationIsQuitting)
 					return null;
 				GameObject go = new GameObject("(Singleton) CollisionManager"); //Optionally enter a more descriptive object name
 				go.AddComponent<CollisionManager>(); //AddComponent runs awake function before continuing
@@ -34,9 +43,9 @@ public class CollisionManager : MonoBehaviour {
 		else if (instance != this)
 			throw new System.InvalidOperationException("[Singleton] More than 1 CollisionManager instance exists.");
 	}
-	public static bool applicationIsQuitting = false;
+	public static bool ApplicationIsQuitting { get; private set; }
 	void OnDestroy(){
-		applicationIsQuitting = true;
+		ApplicationIsQuitting = true;
 	}
 #endregion
 
@@ -67,7 +76,7 @@ public class CollisionManager : MonoBehaviour {
 		}
 	}
 
-	public void CalculateCollision(BabbysFirstCollider _col1, BabbysFirstCollider _col2){
+	void CalculateCollision(BabbysFirstCollider _col1, BabbysFirstCollider _col2){
 		if (_col1 is BabbyBoxCollider){
 			var col1 = _col1 as BabbyBoxCollider;
 
@@ -92,23 +101,23 @@ public class CollisionManager : MonoBehaviour {
 		}
 	}
 
-	public static void BoxBox(BabbyBoxCollider _col, BabbyBoxCollider _col2){
+	void BoxBox(BabbyBoxCollider _col, BabbyBoxCollider _col2){
 
 	}
 
-	public static void SphereSphere(BabbySphereCollider _col, BabbySphereCollider _col2){
+	void SphereSphere(BabbySphereCollider _col, BabbySphereCollider _col2){
 		var pos = _col.transform.position.ToVec2();
 		var otherPos = _col2.transform.position.ToVec2();
 
 		if (pos.Distance(otherPos) < _col.radius + _col2.radius){ //if overlapping
-			CollisionCallbackCheck(_col, _col2);
+			CallbackCheck(_col, _col2);
 			if (_col.isTrigger || _col2.isTrigger)
 				return;
 			
-			var dir = (otherPos-pos).normalized;
+			var dir = (otherPos - pos).normalized;
 			var closestPointOnCircle1 = _col.ClosestPoint(otherPos);
 			var closestPointOnCircle2 = _col2.ClosestPoint(pos);
-			var collisionPoint = (closestPointOnCircle1 + closestPointOnCircle2)/2;
+			var collisionPoint = (closestPointOnCircle1 + closestPointOnCircle2) / 2;
 			var offset1 = collisionPoint - closestPointOnCircle1;
 			var offset2 = collisionPoint - closestPointOnCircle2;
 
@@ -116,7 +125,7 @@ public class CollisionManager : MonoBehaviour {
 			var rb2 = _col2.GetComponent<BabbysFirstRigidbody>();
 
 			//https://stackoverflow.com/questions/573084/how-to-calculate-bounce-angle
-			var perpendicularVelocity = Vector2.Dot(rb1.velocity, -dir)*-dir;
+			var perpendicularVelocity = Vector2.Dot(rb1.velocity, -dir) * -dir;
 			var paralellVelocity = rb1.velocity - perpendicularVelocity;
 			var finalFriction = 1 - (_col.friction + _col2.friction) / 2;
 			var finalBounciness = (_col.bounciness + _col2.bounciness) / 2;
@@ -128,27 +137,28 @@ public class CollisionManager : MonoBehaviour {
 					var massFrac2 = Mathf.Clamp01(rb1.mass / rb2.mass);
 					rb2.transform.Translate(offset2 * massFrac2, Space.World);
 					rb2.velocity = -paralellVelocity * finalFriction + perpendicularVelocity * massFrac2 * finalBounciness; //TODO: Do proper mass-dependent calc
-				} else {
+				} else{
 					rb1.transform.Translate(offset1 * 2, Space.World);
 					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
 				}
-			} else {
+			} else{
 				if (rb2 != null && !rb2.isKinematic){
 					rb2.transform.Translate(offset2 * 2, Space.World);
 					rb2.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
 				}
 			}
-		}
+		} else
+			ExitCallbackCheck(_col, _col2);
 	}
 
-	public Vector2 GetBoxContactPoint(Vector2 _boxPos, Vector2 _otherPos, BabbyBoxCollider _boxCol){
+	Vector2 GetBoxContactPoint(Vector2 _boxPos, Vector2 _otherPos, BabbyBoxCollider _boxCol){
 		Vector2 boxContactPoint;
 		boxContactPoint.x = Mathf.Max(_boxPos.x-_boxCol.Bounds.x, Mathf.Min(_otherPos.x, _boxPos.x + _boxCol.Bounds.x)); //CHECK IF NEED TO CENTER
 		boxContactPoint.y = Mathf.Max(_boxPos.y-_boxCol.Bounds.y, Mathf.Min(_otherPos.y, _boxPos.y + _boxCol.Bounds.y));
 		return boxContactPoint;
 	}
 
-	public void BoxSphere(BabbyBoxCollider _boxCol, BabbySphereCollider _sphereCol){
+	void BoxSphere(BabbyBoxCollider _boxCol, BabbySphereCollider _sphereCol){
 		var spherePos = _sphereCol.transform.position.ToVec2();
 		var boxPos = _boxCol.transform.position.ToVec2();
 
@@ -157,6 +167,10 @@ public class CollisionManager : MonoBehaviour {
 		var delta = spherePos - boxContactPoint; //Delta to circle
 
 		if (delta.x * delta.x + delta.y * delta.y < _sphereCol.radius * _sphereCol.radius){ //If distance to contact point is smaller than circle radius then they are in contact
+			CallbackCheck(_boxCol, _sphereCol);
+			if (_boxCol.isTrigger || _sphereCol.isTrigger)
+				return;
+
 			var boxRB = _boxCol.GetComponent<BabbysFirstRigidbody>();
 			var sphereRB = _sphereCol.GetComponent<BabbysFirstRigidbody>();
 
@@ -216,7 +230,8 @@ public class CollisionManager : MonoBehaviour {
 					sphereRB.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
 				}
 			}
-		}
+		} else
+			ExitCallbackCheck(_boxCol, _sphereCol);
 	}
 
 	bool PointOverlapBox(Vector2 _point, BabbyBoxCollider _boxCol){
@@ -225,17 +240,73 @@ public class CollisionManager : MonoBehaviour {
 		return insideX && insideY;
 	}
 
-	static void CollisionCallbackCheck(BabbysFirstCollider _col, BabbysFirstCollider _col2){
-		if (_col.gameObject.GetComponent<Rigidbody>() != null || _col2.gameObject.GetComponent<Rigidbody>() != null){
-			var collisionCallbacks = _col.gameObject.GetComponents<ICollisionCallback>();
-			for (int i = 0; i < collisionCallbacks.Length; i++){
-				collisionCallbacks[i].OnCollisionEnter(_col2);
-//						collisionCallbacks[i].OnCollisionExit(_col2); //TODO: Exit callbacks
+	void CallbackCheck(BabbysFirstCollider _col, BabbysFirstCollider _col2){
+		if (_col.gameObject.GetComponent<BabbysFirstRigidbody>() != null ||
+			_col2.gameObject.GetComponent<BabbysFirstRigidbody>() != null){
+			var go1 = _col.gameObject;
+			var go2 = _col2.gameObject;
+
+			bool pairFound = false;
+			if (collisions.ContainsKey(go1)){
+				if (collisions[go1].Contains(go2)){
+					pairFound = true;
+				} else
+					collisions[go1].Add(go2);
+			} else if (collisions.ContainsKey(go2)){
+				if (collisions[go2].Contains(go1)){
+					pairFound = true;
+				} else
+					collisions[go2].Add(go1);
+			} else
+				collisions.Add(go1, new List<GameObject>{go2});
+
+			if (!pairFound){
+				var enterCallbacks = go1.GetComponents<IEnterCallback>();
+				for (int i = 0; i < enterCallbacks.Length; i++)
+					enterCallbacks[i].OnColEnter(_col2);
+				enterCallbacks = go2.GetComponents<IEnterCallback>();
+				for (int i = 0; i < enterCallbacks.Length; i++)
+					enterCallbacks[i].OnColEnter(_col);
 			}
-			collisionCallbacks = _col2.gameObject.GetComponents<ICollisionCallback>();
-			for (int i = 0; i < collisionCallbacks.Length; i++){
-				collisionCallbacks[i].OnCollisionEnter(_col);
+
+			var stayCallbacks = go1.GetComponents<IStayCallback>();
+			for (int i = 0; i < stayCallbacks.Length; i++)
+				stayCallbacks[i].OnColStay(_col2);
+			
+			stayCallbacks = go2.GetComponents<IStayCallback>();
+			for (int i = 0; i < stayCallbacks.Length; i++)
+				stayCallbacks[i].OnColStay(_col);
+		}
+	}
+
+	void ExitCallbackCheck(BabbysFirstCollider _col, BabbysFirstCollider _col2){
+		var go1 = _col.gameObject;
+		var go2 = _col2.gameObject;
+
+		bool pairFound = false;
+		if (collisions.ContainsKey(go1)){
+			if (collisions[go1].Contains(go2)){
+				collisions[go1].Remove(go2);
+				if (collisions[go1].Count == 0)
+					collisions.Remove(go1);
+				pairFound = true;
 			}
+		}
+		if (collisions.ContainsKey(go2)){
+			if (collisions[go2].Contains(go1)){
+				collisions[go2].Remove(go1);
+				if (collisions[go2].Count == 0)
+					collisions.Remove(go2);
+				pairFound = true;
+			}
+		}
+		if (pairFound){
+			var exitCallbacks = go1.GetComponents<IExitCallback>();
+			for (int i = 0; i < exitCallbacks.Length; i++)
+				exitCallbacks[i].OnColExit(_col2);
+			exitCallbacks = go2.GetComponents<IExitCallback>();
+			for (int i = 0; i < exitCallbacks.Length; i++)
+				exitCallbacks[i].OnColExit(_col);
 		}
 	}
 }

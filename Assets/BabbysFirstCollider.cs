@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public abstract class BabbysFirstCollider : MonoBehaviour {
 
@@ -10,7 +11,7 @@ public abstract class BabbysFirstCollider : MonoBehaviour {
 		CollisionManager.Inst.RegisterCollider(this);
 	}
 	protected virtual void OnDisable(){
-		if (!CollisionManager.applicationIsQuitting)
+		if (!CollisionManager.ApplicationIsQuitting)
 			CollisionManager.Inst.DeRegisterCollider(this);
 	}
 

@@ -13,7 +13,7 @@ public class BabbysFirstRigidbody : MonoBehaviour {
 		CollisionManager.Inst.RegisterRigidbody(this);
 	}
 	void OnDisable(){
-		if (!CollisionManager.applicationIsQuitting)
+		if (!CollisionManager.ApplicationIsQuitting)
 			CollisionManager.Inst.DeRegisterRigidbody(this);
 	}
 

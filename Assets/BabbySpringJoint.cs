@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 
-[RequireComponent(typeof(BabbysFirstRigidbody))]
+[RequireComponent(typeof(RigidBod2D))]
 public class BabbySpringJoint : MonoBehaviour {
 
-	public BabbysFirstRigidbody connectedBody;
+	public RigidBod2D connectedBody;
 	public float springConstant = 9;
 	public float restingLength = 2;
     public float damping = 1f;
 
-	BabbysFirstRigidbody rb;
+	RigidBod2D rb;
 	void Awake(){
-		rb = GetComponent<BabbysFirstRigidbody>();
+		rb = GetComponent<RigidBod2D>();
 	}
 
 	void FixedUpdate(){ //F = k * x

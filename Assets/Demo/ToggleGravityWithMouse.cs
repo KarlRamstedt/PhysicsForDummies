@@ -13,9 +13,9 @@ public class ToggleGravityWithMouse : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)){
 			var rabies = CollisionManager.Inst.rigidbodies;
 			for (int i = 0; i < rabies.Count; i++){
-				if (rabies[i].GetComponent<BabbysFirstCollider>() == null)
+				if (rabies[i].GetComponent<Collider2DBase>() == null)
 					continue;
-				if (rabies[i].GetComponent<BabbysFirstCollider>().Overlapping(point)){
+				if (rabies[i].GetComponent<Collider2DBase>().Overlapping(point)){
 					rabies[i].useGravity = !rabies[i].useGravity;
 					break;
 				}

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class BabbySphereCollider : BabbysFirstCollider {
+public class CircleCol2D : Collider2DBase {
 
 	public float radius = 0.5f; //The only relevant physics part, rest is just for drawing the circle
 

@@ -6,12 +6,12 @@ public class SetColliderProperities : MonoBehaviour {
 
 	public GameObject objectToChange;
 
-	BabbysFirstCollider col;
-	BabbysFirstRigidbody rb;
+	Collider2DBase col;
+	RigidBod2D rb;
 
 	void Start(){
-		col = objectToChange.GetComponent<BabbysFirstCollider>();
-		rb = objectToChange.GetComponent<BabbysFirstRigidbody>();
+		col = objectToChange.GetComponent<Collider2DBase>();
+		rb = objectToChange.GetComponent<RigidBod2D>();
 		var slider = GetComponentsInChildren<UnityEngine.UI.Slider>();
 		slider[0].value = col.bounciness;
 		slider[1].value = col.friction;

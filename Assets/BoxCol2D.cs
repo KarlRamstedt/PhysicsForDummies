@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class BabbyBoxCollider : BabbysFirstCollider {
+public class BoxCol2D : Collider2DBase {
 
 	public Vector2 Bounds {
 		get {

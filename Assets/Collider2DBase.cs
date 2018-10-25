@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class BabbysFirstCollider : MonoBehaviour {
+//"Base" to avoid conflict with Unity's own Collider class.
+public abstract class Collider2DBase : MonoBehaviour {
 
 	public float friction = 0.25f;
 	public float bounciness = 0.25f;

@@ -6,6 +6,7 @@ public class DragColliderWithMouse : MonoBehaviour {
 	BabbySpringJoint joint;
 
 	void Start(){
+		GetComponent<RigidBod2D>().isKinematic = true;
 		joint = GetComponent<BabbySpringJoint>();
 		joint.enabled = false;
 	}
@@ -17,10 +18,10 @@ public class DragColliderWithMouse : MonoBehaviour {
 		if (Input.GetMouseButtonDown(0)){
 			var rabies = CollisionManager.Inst.rigidbodies;
 			for (int i = 0; i < rabies.Count; i++){
-				if (rabies[i].GetComponent<BabbysFirstCollider>() == null)
+				if (rabies[i].GetComponent<Collider2DBase>() == null)
 					continue;
-				if (rabies[i].GetComponent<BabbysFirstCollider>().Overlapping(point)){
-					joint.connectedBody = rabies[i].GetComponent<BabbysFirstRigidbody>();
+				if (rabies[i].GetComponent<Collider2DBase>().Overlapping(point)){
+					joint.connectedBody = rabies[i].GetComponent<RigidBod2D>();
 					joint.enabled = true;
 					break;
 				}

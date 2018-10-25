@@ -1,16 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public interface IEnterCallback {
-	void OnColEnter(BabbysFirstCollider _col);
-}
-public interface IStayCallback {
-	void OnColStay(BabbysFirstCollider _col);
-}
-public interface IExitCallback {
-	void OnColExit(BabbysFirstCollider _col);
-}
-
 /// <summary>
 /// Instantiated on demand, don't place in scene.
 /// </summary>
@@ -18,8 +8,8 @@ public class CollisionManager : MonoBehaviour {
 
 	public static Vector2 gravity = new Vector2(0f, -9.82f);
 
-	public List<BabbysFirstCollider> colliders = new List<BabbysFirstCollider>();
-	public List<BabbysFirstRigidbody> rigidbodies = new List<BabbysFirstRigidbody>();
+	public List<Collider2DBase> colliders = new List<Collider2DBase>();
+	public List<RigidBod2D> rigidbodies = new List<RigidBod2D>();
 
 	Dictionary<GameObject, List<GameObject>> collisions = new Dictionary<GameObject, List<GameObject>>(); //Does order affect result? | CollisionExit will not run if object is disabled, is that a problem?
 
@@ -49,18 +39,18 @@ public class CollisionManager : MonoBehaviour {
 	}
 #endregion
 
-	public void RegisterCollider(BabbysFirstCollider _col){
+	public void RegisterCollider(Collider2DBase _col){
 		if (!colliders.Contains(_col))
 			colliders.Add(_col);
 	}
-	public void DeRegisterCollider(BabbysFirstCollider _col){
+	public void DeRegisterCollider(Collider2DBase _col){
 		colliders.Remove(_col);
 	}
-	public void RegisterRigidbody(BabbysFirstRigidbody _col){
+	public void RegisterRigidbody(RigidBod2D _col){
 		if (!rigidbodies.Contains(_col))
 			rigidbodies.Add(_col);
 	}
-	public void DeRegisterRigidbody(BabbysFirstRigidbody _col){
+	public void DeRegisterRigidbody(RigidBod2D _col){
 		rigidbodies.Remove(_col);
 	}
 	
@@ -76,36 +66,36 @@ public class CollisionManager : MonoBehaviour {
 		}
 	}
 
-	void CalculateCollision(BabbysFirstCollider _col1, BabbysFirstCollider _col2){
-		if (_col1 is BabbyBoxCollider){
-			var col1 = _col1 as BabbyBoxCollider;
+	void CalculateCollision(Collider2DBase _col1, Collider2DBase _col2){
+		if (_col1 is BoxCol2D){
+			var col1 = _col1 as BoxCol2D;
 
-			if (_col2 is BabbyBoxCollider){
-				var col2 = _col2 as BabbyBoxCollider;
+			if (_col2 is BoxCol2D){
+				var col2 = _col2 as BoxCol2D;
 				BoxBox(col1, col2);
-			} else if (_col2 is BabbySphereCollider){
-				var col2 = _col2 as BabbySphereCollider;
+			} else if (_col2 is CircleCol2D){
+				var col2 = _col2 as CircleCol2D;
 				BoxSphere(col1, col2);
 			}
 
-		} else if (_col1 is BabbySphereCollider){
-			var col1 = _col1 as BabbySphereCollider;
+		} else if (_col1 is CircleCol2D){
+			var col1 = _col1 as CircleCol2D;
 
-			if (_col2 is BabbyBoxCollider){
-				var col2 = _col2 as BabbyBoxCollider;
+			if (_col2 is BoxCol2D){
+				var col2 = _col2 as BoxCol2D;
 				BoxSphere(col2, col1);
-			} else if (_col2 is BabbySphereCollider){
-				var col2 = _col2 as BabbySphereCollider;
-				SphereSphere(col1, col2);
+			} else if (_col2 is CircleCol2D){
+				var col2 = _col2 as CircleCol2D;
+				CircleCircle(col1, col2);
 			}
 		}
 	}
 
-	void BoxBox(BabbyBoxCollider _col, BabbyBoxCollider _col2){
+	void BoxBox(BoxCol2D _col, BoxCol2D _col2){
 
 	}
 
-	void SphereSphere(BabbySphereCollider _col, BabbySphereCollider _col2){
+	void CircleCircle(CircleCol2D _col, CircleCol2D _col2){
 		var pos = _col.transform.position.ToVec2();
 		var otherPos = _col2.transform.position.ToVec2();
 
@@ -121,8 +111,8 @@ public class CollisionManager : MonoBehaviour {
 			var offset1 = collisionPoint - closestPointOnCircle1;
 			var offset2 = collisionPoint - closestPointOnCircle2;
 
-			var rb1 = _col.GetComponent<BabbysFirstRigidbody>();
-			var rb2 = _col2.GetComponent<BabbysFirstRigidbody>();
+			var rb1 = _col.GetComponent<RigidBod2D>();
+			var rb2 = _col2.GetComponent<RigidBod2D>();
 
 			//https://stackoverflow.com/questions/573084/how-to-calculate-bounce-angle
 			var perpendicularVelocity = Vector2.Dot(rb1.velocity, -dir) * -dir;
@@ -151,44 +141,44 @@ public class CollisionManager : MonoBehaviour {
 			ExitCallbackCheck(_col, _col2);
 	}
 
-	Vector2 GetBoxContactPoint(Vector2 _boxPos, Vector2 _otherPos, BabbyBoxCollider _boxCol){
+	Vector2 GetBoxContactPoint(Vector2 _boxPos, Vector2 _otherPos, BoxCol2D _boxCol){
 		Vector2 boxContactPoint;
 		boxContactPoint.x = Mathf.Max(_boxPos.x-_boxCol.Bounds.x, Mathf.Min(_otherPos.x, _boxPos.x + _boxCol.Bounds.x)); //CHECK IF NEED TO CENTER
 		boxContactPoint.y = Mathf.Max(_boxPos.y-_boxCol.Bounds.y, Mathf.Min(_otherPos.y, _boxPos.y + _boxCol.Bounds.y));
 		return boxContactPoint;
 	}
 
-	void BoxSphere(BabbyBoxCollider _boxCol, BabbySphereCollider _sphereCol){
-		var spherePos = _sphereCol.transform.position.ToVec2();
+	void BoxSphere(BoxCol2D _boxCol, CircleCol2D _circleCol){
+		var spherePos = _circleCol.transform.position.ToVec2();
 		var boxPos = _boxCol.transform.position.ToVec2();
 
 		//Check clamped outer box coordinate | ALSO CONTACT POINT || https://yal.cc/rectangle-circle-intersection-test/
 		var boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol); //CHECK IF NEED TO CENTER
 		var delta = spherePos - boxContactPoint; //Delta to circle
 
-		if (delta.x * delta.x + delta.y * delta.y < _sphereCol.radius * _sphereCol.radius){ //If distance to contact point is smaller than circle radius then they are in contact
-			CallbackCheck(_boxCol, _sphereCol);
-			if (_boxCol.isTrigger || _sphereCol.isTrigger)
+		if (delta.x * delta.x + delta.y * delta.y < _circleCol.radius * _circleCol.radius){ //If distance to contact point is smaller than circle radius then they are in contact
+			CallbackCheck(_boxCol, _circleCol);
+			if (_boxCol.isTrigger || _circleCol.isTrigger)
 				return;
 
-			var boxRB = _boxCol.GetComponent<BabbysFirstRigidbody>();
-			var sphereRB = _sphereCol.GetComponent<BabbysFirstRigidbody>();
+			var boxRB = _boxCol.GetComponent<RigidBod2D>();
+			var sphereRB = _circleCol.GetComponent<RigidBod2D>();
 
 			var normal = delta.normalized;
-			var finalFriction = 1 - (_boxCol.friction + _sphereCol.friction) / 2;
-			var finalBounciness = (_boxCol.bounciness + _sphereCol.bounciness) / 2;
+			var finalFriction = 1 - (_boxCol.friction + _circleCol.friction) / 2;
+			var finalBounciness = (_boxCol.bounciness + _circleCol.bounciness) / 2;
 
 			Vector2 closestPointOnCircle;
 			if (_boxCol.Overlapping(spherePos)){ //TODO: set differently when sphere center overlaps box
 				var dir = (spherePos - boxPos).normalized;
-				spherePos = dir * (_boxCol.Bounds.x + _boxCol.Bounds.y + _sphereCol.radius); //Offset sphere outside box
+				spherePos = dir * (_boxCol.Bounds.x + _boxCol.Bounds.y + _circleCol.radius); //Offset sphere outside box
 				boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
 				normal = (spherePos - boxContactPoint).normalized;
-				closestPointOnCircle = spherePos -normal.normalized * _sphereCol.radius;
+				closestPointOnCircle = spherePos -normal.normalized * _circleCol.radius;
 				spherePos += boxContactPoint - closestPointOnCircle;
 			}
 
-			closestPointOnCircle = spherePos - normal.normalized * _sphereCol.radius;
+			closestPointOnCircle = spherePos - normal.normalized * _circleCol.radius;
 			var offset = boxContactPoint - closestPointOnCircle; //ALSO NORMAL? | NOT ROBUST, WILL GENERATE WRONG NUMBERS IF SPHERE CENTER OVERLAPS BOX
 			Debug.DrawLine(spherePos, spherePos + offset);
 
@@ -231,18 +221,19 @@ public class CollisionManager : MonoBehaviour {
 				}
 			}
 		} else
-			ExitCallbackCheck(_boxCol, _sphereCol);
+			ExitCallbackCheck(_boxCol, _circleCol);
 	}
 
-	bool PointOverlapBox(Vector2 _point, BabbyBoxCollider _boxCol){
+	bool PointOverlapBox(Vector2 _point, BoxCol2D _boxCol){
 		var insideX = _boxCol.transform.position.x - _boxCol.transform.lossyScale.x/2 < _point.x && _point.x < _boxCol.transform.position.x + _boxCol.transform.lossyScale.x/2;
 		var insideY = _boxCol.transform.position.y-_boxCol.transform.lossyScale.y/2 < _point.y && _point.y < _boxCol.transform.position.y+_boxCol.transform.lossyScale.y/2;
 		return insideX && insideY;
 	}
 
-	void CallbackCheck(BabbysFirstCollider _col, BabbysFirstCollider _col2){
-		if (_col.gameObject.GetComponent<BabbysFirstRigidbody>() != null ||
-			_col2.gameObject.GetComponent<BabbysFirstRigidbody>() != null){
+
+	void CallbackCheck(Collider2DBase _col, Collider2DBase _col2){
+		if (_col.gameObject.GetComponent<RigidBod2D>() != null ||
+			_col2.gameObject.GetComponent<RigidBod2D>() != null){
 			var go1 = _col.gameObject;
 			var go2 = _col2.gameObject;
 
@@ -279,7 +270,7 @@ public class CollisionManager : MonoBehaviour {
 		}
 	}
 
-	void ExitCallbackCheck(BabbysFirstCollider _col, BabbysFirstCollider _col2){
+	void ExitCallbackCheck(Collider2DBase _col, Collider2DBase _col2){
 		var go1 = _col.gameObject;
 		var go2 = _col2.gameObject;
 
@@ -309,6 +300,16 @@ public class CollisionManager : MonoBehaviour {
 				exitCallbacks[i].OnColExit(_col);
 		}
 	}
+}
+
+public interface IEnterCallback {
+	void OnColEnter(Collider2DBase _col);
+}
+public interface IStayCallback {
+	void OnColStay(Collider2DBase _col);
+}
+public interface IExitCallback {
+	void OnColExit(Collider2DBase _col);
 }
 
 public static class Vector2Extensions {

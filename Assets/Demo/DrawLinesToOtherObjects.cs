@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(LineRenderer))]
-public class DrawLineBetweenTwoObjects : MonoBehaviour {
+public class DrawLinesToOtherObjects : MonoBehaviour {
 
 	public Transform[] other;
 

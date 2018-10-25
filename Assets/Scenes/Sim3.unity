@@ -140,14 +140,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 301344530}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c569cff36dd123c4da449fcffd7174d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f011f3360638234f84dc791d8dc53fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: -4}
-  mass: 1e+10
-  useGravity: 1
-  isKinematic: 0
-  forces: {x: 0, y: 0}
+  friction: 0.25
+  bounciness: 0.25
+  isTrigger: 0
+  radius: 0.5
 --- !u!114 &301344532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,6 +160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.25
+  isTrigger: 0
   radius: 0.5
 --- !u!23 &301344533
 MeshRenderer:
@@ -214,7 +214,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &767640475
 GameObject:
@@ -243,14 +243,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 767640475}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c569cff36dd123c4da449fcffd7174d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f011f3360638234f84dc791d8dc53fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0}
-  mass: 1e+12
-  useGravity: 1
-  isKinematic: 0
-  forces: {x: 0, y: 0}
+  friction: 0.25
+  bounciness: 0.25
+  isTrigger: 0
+  radius: 0.5
 --- !u!114 &767640477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -264,6 +263,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.25
+  isTrigger: 0
   radius: 0.5
 --- !u!23 &767640478
 MeshRenderer:
@@ -317,7 +317,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1580458190
 GameObject:
@@ -427,14 +427,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1587336655}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c569cff36dd123c4da449fcffd7174d8, type: 3}
+  m_Script: {fileID: 11500000, guid: 3f011f3360638234f84dc791d8dc53fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 6}
-  mass: 1e+10
-  useGravity: 1
-  isKinematic: 0
-  forces: {x: 0, y: 0}
+  friction: 0.25
+  bounciness: 0.25
+  isTrigger: 0
+  radius: 0.5
 --- !u!114 &1587336657
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -448,6 +447,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   friction: 0.25
   bounciness: 0.25
+  isTrigger: 0
   radius: 0.5
 --- !u!23 &1587336658
 MeshRenderer:
@@ -501,7 +501,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1700224564
 GameObject:
@@ -589,8 +589,8 @@ RectTransform:
   m_LocalScale: {x: 0, y: 0, z: 0}
   m_Children:
   - {fileID: 1580458191}
-  m_Father: {fileID: 0}
-  m_RootOrder: 1
+  m_Father: {fileID: 1822546630}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -677,7 +677,8 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1700224568}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

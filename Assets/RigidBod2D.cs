@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class BabbysFirstRigidbody : MonoBehaviour {
+//The most rigid of bods.
+public class RigidBod2D : MonoBehaviour {
 
 	public Vector2 velocity, angularVelocity = Vector2.zero;
 	public float mass = 1f;

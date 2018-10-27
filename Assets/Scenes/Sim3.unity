@@ -155,13 +155,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 301344530}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89d6be5a016743741a224e25a8a21cb4, type: 3}
+  m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friction: 0.25
-  bounciness: 0.25
-  isTrigger: 0
-  radius: 0.5
+  force: {x: 0, y: -4}
+  angularVelocity: {x: 0, y: 0}
+  mass: 1e+10
+  useGravity: 1
+  isKinematic: 0
 --- !u!23 &301344533
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -258,13 +259,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 767640475}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89d6be5a016743741a224e25a8a21cb4, type: 3}
+  m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friction: 0.25
-  bounciness: 0.25
-  isTrigger: 0
-  radius: 0.5
+  force: {x: 0, y: 0}
+  angularVelocity: {x: 0, y: 0}
+  mass: 1e+12
+  useGravity: 1
+  isKinematic: 0
 --- !u!23 &767640478
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -442,13 +444,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1587336655}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 89d6be5a016743741a224e25a8a21cb4, type: 3}
+  m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friction: 0.25
-  bounciness: 0.25
-  isTrigger: 0
-  radius: 0.5
+  force: {x: 0, y: 5}
+  angularVelocity: {x: 0, y: 0}
+  mass: 1e+10
+  useGravity: 1
+  isKinematic: 0
 --- !u!23 &1587336658
 MeshRenderer:
   m_ObjectHideFlags: 0

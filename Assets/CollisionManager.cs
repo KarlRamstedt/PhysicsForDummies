@@ -59,9 +59,11 @@ public class CollisionManager : MonoBehaviour {
 			rigidbodies[i].UpdatePosition();
 		}
 
-		for (int i = 0, len = colliders.Count; i < len; i++){
-			for (int j = i+1; j < len; j++){
-				CalculateCollision(colliders[i], colliders[j]);
+		for (int solverIterations = 0; solverIterations < 5; solverIterations++){ //Improves accuracy but makes callbacks run multiple times
+			for (int i = 0, len = colliders.Count; i < len; i++){
+				for (int j = i+1; j < len; j++){
+					CalculateCollision(colliders[i], colliders[j]);
+				}
 			}
 		}
 	}
@@ -99,8 +101,8 @@ public class CollisionManager : MonoBehaviour {
 		var pos = _col.transform.position.ToVec2();
 		var otherPos = _col2.transform.position.ToVec2();
 
-		if (pos.Distance(otherPos) < _col.radius + _col2.radius){ //if overlapping
-			CallbackCheck(_col, _col2);
+		if (pos.Distance(otherPos) < _col.Radius + _col2.Radius){ //if overlapping
+//			CallbackCheck(_col, _col2);
 			if (_col.isTrigger || _col2.isTrigger)
 				return;
 			
@@ -117,28 +119,28 @@ public class CollisionManager : MonoBehaviour {
 			//https://stackoverflow.com/questions/573084/how-to-calculate-bounce-angle
 			var perpendicularVelocity = Vector2.Dot(rb1.velocity, -dir) * -dir;
 			var paralellVelocity = rb1.velocity - perpendicularVelocity;
-			var finalFriction = 1 - (_col.friction + _col2.friction) / 2;
-			var finalBounciness = (_col.bounciness + _col2.bounciness) / 2;
+			var avgFriction = Mathf.Clamp01(1 - (_col.friction + _col2.friction) / 2);
+			var avgBounciness = (_col.bounciness + _col2.bounciness) / 2;
+
 			if (rb1 != null && !rb1.isKinematic){
 				if (rb2 != null && !rb2.isKinematic){
-					var massFrac1 = Mathf.Clamp01(rb2.mass / rb1.mass);
-					rb1.transform.Translate(offset1 * massFrac1, Space.World);
-					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * massFrac1 * finalBounciness;
-					var massFrac2 = Mathf.Clamp01(rb1.mass / rb2.mass);
-					rb2.transform.Translate(offset2 * massFrac2, Space.World);
-					rb2.velocity = -paralellVelocity * finalFriction + perpendicularVelocity * massFrac2 * finalBounciness; //TODO: Do proper mass-dependent calc
+					var massFrac = rb1.mass / (rb1.mass+rb2.mass);
+					rb1.Move(offset1 * (1-massFrac));
+					rb1.velocity = paralellVelocity * avgFriction - perpendicularVelocity * (1-massFrac) * avgBounciness;
+					rb2.Move(offset2 * massFrac);
+					rb2.velocity = -paralellVelocity * avgFriction + perpendicularVelocity * massFrac * avgBounciness; //TODO: Do proper mass-dependent calc
 				} else{
-					rb1.transform.Translate(offset1 * 2, Space.World);
-					rb1.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
+					rb1.Move(offset1 * 2);
+					rb1.velocity = paralellVelocity * avgFriction - perpendicularVelocity * avgBounciness;
 				}
 			} else{
 				if (rb2 != null && !rb2.isKinematic){
-					rb2.transform.Translate(offset2 * 2, Space.World);
-					rb2.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
+					rb2.Move(offset2 * 2);
+					rb2.velocity = paralellVelocity * avgFriction - perpendicularVelocity * avgBounciness;
 				}
 			}
-		} else
-			ExitCallbackCheck(_col, _col2);
+		}// else
+//			ExitCallbackCheck(_col, _col2);
 	}
 
 	Vector2 GetBoxContactPoint(Vector2 _boxPos, Vector2 _otherPos, BoxCol2D _boxCol){
@@ -156,8 +158,8 @@ public class CollisionManager : MonoBehaviour {
 		var boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol); //CHECK IF NEED TO CENTER
 		var delta = spherePos - boxContactPoint; //Delta to circle
 
-		if (delta.x * delta.x + delta.y * delta.y < _circleCol.radius * _circleCol.radius){ //If distance to contact point is smaller than circle radius then they are in contact
-			CallbackCheck(_boxCol, _circleCol);
+		if (delta.x * delta.x + delta.y * delta.y < _circleCol.Radius * _circleCol.Radius){ //If distance to contact point is smaller than circle radius then they are in contact
+//			CallbackCheck(_boxCol, _circleCol);
 			if (_boxCol.isTrigger || _circleCol.isTrigger)
 				return;
 
@@ -165,26 +167,25 @@ public class CollisionManager : MonoBehaviour {
 			var sphereRB = _circleCol.GetComponent<RigidBod2D>();
 
 			var normal = delta.normalized;
-			var finalFriction = 1 - (_boxCol.friction + _circleCol.friction) / 2;
-			var finalBounciness = (_boxCol.bounciness + _circleCol.bounciness) / 2;
+			var avgFriction = Mathf.Clamp01(1 - (_boxCol.friction + _circleCol.friction) / 2);
+			var avgBounciness = Mathf.Max((_boxCol.bounciness + _circleCol.bounciness) / 2, 0);
 
 			Vector2 closestPointOnCircle;
 			if (_boxCol.Overlapping(spherePos)){ //TODO: set differently when sphere center overlaps box
 				var dir = (spherePos - boxPos).normalized;
-				spherePos = dir * (_boxCol.Bounds.x + _boxCol.Bounds.y + _circleCol.radius); //Offset sphere outside box
+				spherePos = dir * (_boxCol.Bounds.x + _boxCol.Bounds.y + _circleCol.Radius); //Offset sphere outside box
 				boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
 				normal = (spherePos - boxContactPoint).normalized;
-				closestPointOnCircle = spherePos -normal.normalized * _circleCol.radius;
+				closestPointOnCircle = spherePos -normal.normalized * _circleCol.Radius;
 				spherePos += boxContactPoint - closestPointOnCircle;
 			}
 
-			closestPointOnCircle = spherePos - normal.normalized * _circleCol.radius;
+			closestPointOnCircle = spherePos - normal.normalized * _circleCol.Radius;
 			var offset = boxContactPoint - closestPointOnCircle; //ALSO NORMAL? | NOT ROBUST, WILL GENERATE WRONG NUMBERS IF SPHERE CENTER OVERLAPS BOX
-			Debug.DrawLine(spherePos, spherePos + offset);
 
 			if (boxRB != null && !boxRB.isKinematic){
 				if (sphereRB != null && !sphereRB.isKinematic){
-					var massFrac = boxRB.mass / sphereRB.mass;
+					var massFrac = boxRB.mass / (boxRB.mass+sphereRB.mass);
 					boxRB.transform.position = spherePos + -offset * massFrac;
 					//RECALC DELTA FOR CORRECT NORMAL AFTER OFFSET
 					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
@@ -195,9 +196,9 @@ public class CollisionManager : MonoBehaviour {
 					var perpendicularVelocity = Vector2.Dot(-boxRB.velocity, normal)*normal;
 					var paralellVelocity = -boxRB.velocity - perpendicularVelocity;
 
-					boxRB.velocity = paralellVelocity * finalFriction - perpendicularVelocity * massFrac * finalBounciness;
+					boxRB.velocity = paralellVelocity * avgFriction - perpendicularVelocity * massFrac * avgBounciness;
 				} else {
-					boxRB.transform.Translate(-offset, Space.World);
+					boxRB.Move(-offset);
 					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
 					delta = spherePos - boxContactPoint;
 					normal = delta.normalized;
@@ -205,11 +206,11 @@ public class CollisionManager : MonoBehaviour {
 					var perpendicularVelocity = Vector2.Dot(-boxRB.velocity, normal)*normal;
 					var paralellVelocity = -boxRB.velocity - perpendicularVelocity;
 
-					boxRB.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
+					boxRB.velocity = paralellVelocity * avgFriction - perpendicularVelocity * avgBounciness;
 				}
 			} else {
 				if (sphereRB != null && !sphereRB.isKinematic){
-					sphereRB.transform.Translate(offset, Space.World);
+					sphereRB.Move(offset);
 					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
 					delta = spherePos - boxContactPoint;
 					normal = delta.normalized;
@@ -217,11 +218,11 @@ public class CollisionManager : MonoBehaviour {
 					var perpendicularVelocity = Vector2.Dot(sphereRB.velocity, normal) * normal;
 					var paralellVelocity = sphereRB.velocity - perpendicularVelocity;
 
-					sphereRB.velocity = paralellVelocity * finalFriction - perpendicularVelocity * finalBounciness;
+					sphereRB.velocity = paralellVelocity * avgFriction - perpendicularVelocity * avgBounciness;
 				}
 			}
-		} else
-			ExitCallbackCheck(_boxCol, _circleCol);
+		}// else
+//			ExitCallbackCheck(_boxCol, _circleCol);
 	}
 
 	bool PointOverlapBox(Vector2 _point, BoxCol2D _boxCol){
@@ -230,6 +231,8 @@ public class CollisionManager : MonoBehaviour {
 		return insideX && insideY;
 	}
 
+
+	delegate void Callbacks(Collider2DBase _col);
 
 	void CallbackCheck(Collider2DBase _col, Collider2DBase _col2){
 		if (_col.gameObject.GetComponent<RigidBod2D>() != null ||

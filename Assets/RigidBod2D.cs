@@ -3,12 +3,25 @@
 //The most rigid of bods.
 public class RigidBod2D : MonoBehaviour {
 
-	public Vector2 velocity, angularVelocity = Vector2.zero;
+	public Vector2 force = Vector2.zero;
+	public Vector2 angularVelocity = Vector2.zero;
 	public float mass = 1f;
 	public bool useGravity = true;
 	public bool isKinematic = false;
 
-	[HideInInspector] public Vector2 forces = Vector2.zero;
+	public Vector2 velocity { //Verlet integration
+		get { return (transform.position.ToVec2()-previousPosition) / Time.fixedDeltaTime; } //V = (pos-prevPos)/T
+		set { previousPosition = transform.position.ToVec2() - value * Time.fixedDeltaTime; } //prevPos = pos - V*T
+	}
+	Vector2 previousPosition;
+
+	public void Move(Vector2 _movementDelta){
+		transform.Translate(_movementDelta.ToVec3()); //previousPosition += _movementDelta;
+	}
+
+	void Awake(){
+		velocity = force; // / mass * Time.fixedDeltaTime
+	}
 
 	void OnEnable(){
 		CollisionManager.Inst.RegisterRigidbody(this);
@@ -27,10 +40,10 @@ public class RigidBod2D : MonoBehaviour {
 				velocity += _force;
 				break;
 			case ForceMode.Force:
-				forces += _force; //Correct?
+				force += _force; //Correct?
 				break;
 			case ForceMode.Impulse:
-				forces += _force / Time.fixedDeltaTime; //Correct?
+				force += _force / Time.fixedDeltaTime; //Correct?
 				break;
 			default:
 				Debug.LogWarning("Unsupported ForceMode");
@@ -47,20 +60,15 @@ public class RigidBod2D : MonoBehaviour {
 				velocity += _force;
 				break;
 			case ForceMode.Force:
-				forces += _force;
+				force += _force;
 				break;
 			case ForceMode.Impulse:
-				forces += _force / Time.fixedDeltaTime;
+				force += _force / Time.fixedDeltaTime;
 				break;
 			default:
 				Debug.LogWarning("Unsupported ForceMode");
 				break;
 		}
-	}
-
-	public void ClearForce(){
-		forces = Vector2.zero;
-		angularVelocity = Vector2.zero;
 	}
 
 	public void UpdatePosition(){
@@ -70,11 +78,14 @@ public class RigidBod2D : MonoBehaviour {
 		}
 		var timeDelta = Time.fixedDeltaTime;
 		if (useGravity)
-			velocity += CollisionManager.gravity * timeDelta; //Convert gravity acceleration to velocity and add to total velocity
-		velocity += forces / mass * timeDelta;
-		forces = Vector2.zero;
-		
-		var movementDelta = velocity * timeDelta;
-		transform.Translate(new Vector3(movementDelta.x, movementDelta.y, 0f));
+			force += mass * CollisionManager.gravity; //F = m * a
+//		var velocityDelta = forces / mass * timeDelta;
+//		var movementDelta = (velocity + velocityDelta) * timeDelta;
+		var newPos = transform.position.ToVec2() * 2 - previousPosition + force * timeDelta*timeDelta / mass;
+		force = Vector2.zero;
+
+		previousPosition = transform.position;
+		transform.position = newPos.ToVec3();
+//		transform.Translate(movementDelta.ToVec3());
 	}
 }

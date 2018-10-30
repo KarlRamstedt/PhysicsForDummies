@@ -904,7 +904,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  force: {x: 3, y: 0}
+  force: {x: 9, y: 0}
   angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 0

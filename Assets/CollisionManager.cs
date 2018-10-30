@@ -108,13 +108,7 @@ public class CollisionManager : MonoBehaviour {
 				return;
 			
 			var dir = (otherPos - pos).normalized;
-			var closestPointOnCircle1 = _col.ClosestPoint(otherPos);
-			var closestPointOnCircle2 = _col2.ClosestPoint(pos);
-			var collisionPoint = (closestPointOnCircle1 + closestPointOnCircle2) / 2;
-			var offset1 = collisionPoint - closestPointOnCircle1;
-			var offset2 = collisionPoint - closestPointOnCircle2;
-
-			Debug.DrawLine(collisionPoint, collisionPoint + dir, Color.green);
+			var penetration = _col2.ClosestPoint(pos) - _col.ClosestPoint(otherPos);
 
 			var rb1 = _col.GetComponent<RigidBod2D>();
 			var rb2 = _col2.GetComponent<RigidBod2D>();
@@ -127,33 +121,25 @@ public class CollisionManager : MonoBehaviour {
 			if (rb1 != null && !rb1.isKinematic){
 				if (rb2 != null && !rb2.isKinematic){
 					var massFraction = rb1.mass / (rb1.mass+rb2.mass); //Simply constraining will make in-elastic collisions work great with verlet integration. Elasticity is ignored tho
-					rb1.Move(offset1 * (1-massFraction));
-					rb2.Move(offset2 * massFraction);
+					rb1.Move(penetration * (1-massFraction));
+					rb2.Move(-penetration * massFraction);
 
-//					var separatingVelocity = Vector2.Dot(rb1.velocity - rb2.velocity, dir);
-//					if (separatingVelocity > 0)
-//						return;
-//					var newSepVelocity = -separatingVelocity * avgBounciness; //Bounce = restitution?
-//					var deltaVelocity = newSepVelocity - separatingVelocity;
-//					var impulse = deltaVelocity / (1/rb1.mass + 1/rb2.mass);
-//					var impulsePerIMass = dir * impulse;
-//					print(deltaVelocity);
-//					rb1.velocity = rb1.velocity + impulsePerIMass * -(1/rb1.mass);
-//					rb2.velocity = rb2.velocity + impulsePerIMass * 1/rb2.mass;
+//					var rb1PerpendicularVelocity = Vector2.Dot(rb1.velocity, -dir) * -dir;
+//					var rb1ParalellVelocity = rb1.velocity - rb1PerpendicularVelocity;
+//					rb1.velocity = rb1ParalellVelocity * avgFriction - rb1PerpendicularVelocity * avgBounciness;
+//					var rb2PerpendicularVelocity = Vector2.Dot(rb2.velocity, dir) * dir;
+//					var rb2ParalellVelocity = rb2.velocity - rb2PerpendicularVelocity;
 
-//					var closingVelocity = rb1PerpendicularVelocity + rb2PerpendicularVelocity;
+//					rb1.AddForce(avgBounciness * (rb2PerpendicularVelocity-rb1PerpendicularVelocity), ForceMode.VelocityChange);
+//					rb2.AddForce(avgBounciness * (rb1PerpendicularVelocity-rb2PerpendicularVelocity), ForceMode.VelocityChange);
+//					print(rb1.velocity + rb2.velocity);
+//					rb2.velocity = rb2ParalellVelocity * avgFriction - rb2PerpendicularVelocity * avgBounciness;
 				} else {
-					rb1.Move(offset1 * 2);
-					var rb1PerpendicularVelocity = Vector2.Dot(rb1.velocity, -dir) * -dir;
-					var rb1ParalellVelocity = rb1.velocity - rb1PerpendicularVelocity;
-					rb1.velocity = rb1ParalellVelocity * avgFriction - rb1PerpendicularVelocity * avgBounciness;
+					rb1.Move(penetration);
 				}
 			} else {
 				if (rb2 != null && !rb2.isKinematic){
-					rb2.Move(offset2 * 2);
-					var rb2PerpendicularVelocity = Vector2.Dot(rb2.velocity, dir) * dir;
-					var rb2ParalellVelocity = rb2.velocity - rb2PerpendicularVelocity;
-					rb2.velocity = rb2ParalellVelocity * avgFriction - rb2PerpendicularVelocity * avgBounciness;
+					rb2.Move(-penetration);
 				}
 			}
 		}// else
@@ -198,44 +184,44 @@ public class CollisionManager : MonoBehaviour {
 			}
 
 			closestPointOnCircle = spherePos - normal * _circleCol.Radius;
-			var offset = boxContactPoint - closestPointOnCircle; //ALSO NORMAL? | NOT ROBUST, WILL GENERATE WRONG NUMBERS IF SPHERE CENTER OVERLAPS BOX
+			var penetration = boxContactPoint - closestPointOnCircle; //ALSO NORMAL? | NOT ROBUST, WILL GENERATE WRONG NUMBERS IF SPHERE CENTER OVERLAPS BOX
 
 			if (boxRB != null && !boxRB.isKinematic){
 				if (sphereRB != null && !sphereRB.isKinematic){
-					var massFrac = boxRB.mass / (boxRB.mass+sphereRB.mass);
-					boxRB.transform.position = spherePos + -offset * massFrac;
-					//RECALC DELTA FOR CORRECT NORMAL AFTER OFFSET
-					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
-
-					delta = spherePos - boxContactPoint;
-					normal = delta.normalized;
-
-					var perpendicularVelocity = Vector2.Dot(-boxRB.velocity, normal)*normal;
-					var paralellVelocity = -boxRB.velocity - perpendicularVelocity;
-
-					boxRB.velocity = paralellVelocity * avgFriction - perpendicularVelocity * massFrac * avgBounciness;
+//					var massFrac = boxRB.mass / (boxRB.mass+sphereRB.mass);
+//					boxRB.transform.position = spherePos + -penetration * massFrac;
+//					//RECALC DELTA FOR CORRECT NORMAL AFTER OFFSET
+//					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
+//
+//					delta = spherePos - boxContactPoint;
+//					normal = delta.normalized;
+//
+//					var perpendicularVelocity = Vector2.Dot(-boxRB.velocity, normal)*normal;
+//					var paralellVelocity = -boxRB.velocity - perpendicularVelocity;
+//
+//					boxRB.velocity = paralellVelocity * avgFriction - perpendicularVelocity * massFrac * avgBounciness;
 				} else {
-					boxRB.Move(-offset);
-					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
-					delta = spherePos - boxContactPoint;
-					normal = delta.normalized;
-
-					var perpendicularVelocity = Vector2.Dot(-boxRB.velocity, normal)*normal;
-					var paralellVelocity = -boxRB.velocity - perpendicularVelocity;
-
-					boxRB.velocity = paralellVelocity * avgFriction - perpendicularVelocity * avgBounciness;
+					boxRB.Move(-penetration);
+//					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
+//					delta = spherePos - boxContactPoint;
+//					normal = delta.normalized;
+//
+//					var perpendicularVelocity = Vector2.Dot(-boxRB.velocity, normal)*normal;
+//					var paralellVelocity = -boxRB.velocity - perpendicularVelocity;
+//
+//					boxRB.velocity = paralellVelocity * avgFriction - perpendicularVelocity * avgBounciness;
 				}
 			} else {
 				if (sphereRB != null && !sphereRB.isKinematic){
-					sphereRB.Move(offset);
-					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
-					delta = spherePos - boxContactPoint;
-					normal = delta.normalized;
-				
-					var perpendicularVelocity = Vector2.Dot(sphereRB.velocity, normal) * normal;
-					var paralellVelocity = sphereRB.velocity - perpendicularVelocity;
-
-					sphereRB.velocity = paralellVelocity * avgFriction - perpendicularVelocity * avgBounciness;
+					sphereRB.Move(penetration);
+//					boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
+//					delta = spherePos - boxContactPoint;
+//					normal = delta.normalized;
+//				
+//					var perpendicularVelocity = Vector2.Dot(sphereRB.velocity, normal) * normal;
+//					var paralellVelocity = sphereRB.velocity - perpendicularVelocity;
+//
+//					sphereRB.velocity = paralellVelocity * avgFriction - perpendicularVelocity * avgBounciness;
 				}
 			}
 		}// else

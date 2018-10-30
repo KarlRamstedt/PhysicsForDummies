@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
 //The most rigid of bods.
+[DisallowMultipleComponent]
 public class RigidBod2D : MonoBehaviour {
 
 	public Vector2 force = Vector2.zero;
@@ -15,12 +16,6 @@ public class RigidBod2D : MonoBehaviour {
 	}
 	Vector2 previousPosition;
 
-	public void Move(Vector2 _movementDelta){
-		transform.Translate(_movementDelta.ToVec3()); //previousPosition += _movementDelta;
-	}
-
-
-
 	void Awake(){
 		velocity = force; // / mass * Time.fixedDeltaTime
 	}
@@ -31,6 +26,10 @@ public class RigidBod2D : MonoBehaviour {
 	void OnDisable(){
 		if (!CollisionManager.ApplicationIsQuitting)
 			CollisionManager.Inst.DeRegisterRigidbody(this);
+	}
+
+	public void Move(Vector2 _movementDelta){
+		transform.Translate(_movementDelta.ToVec3());
 	}
 
 	public void AddForce(Vector2 _force, ForceMode _mode){ //F = mass * meters/seconds^2
@@ -53,27 +52,8 @@ public class RigidBod2D : MonoBehaviour {
 		}
 	}
 
-	public void AddForceAtPoint(Vector2 _force, ForceMode _mode, Vector2 _point){
-		switch (_mode){
-			case ForceMode.Acceleration:
-				velocity += _force * Time.fixedDeltaTime;
-				break;
-			case ForceMode.VelocityChange:
-				velocity += _force;
-				break;
-			case ForceMode.Force:
-				force += _force;
-				break;
-			case ForceMode.Impulse:
-				force += _force / Time.fixedDeltaTime;
-				break;
-			default:
-				Debug.LogWarning("Unsupported ForceMode");
-				break;
-		}
-	}
-
 	public void UpdatePosition(){
+//		print(velocity);
 		if (isKinematic){
 			velocity = Vector2.zero;
 			return;

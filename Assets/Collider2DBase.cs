@@ -4,8 +4,8 @@ using UnityEngine;
 //"Base" to avoid conflict with Unity's own Collider class.
 public abstract class Collider2DBase : MonoBehaviour {
 
-	public float friction = 0.25f;
-	public float bounciness = 0.25f;
+	[Range(0f, 1f)] public float friction = 0.25f;
+	[Range(0f, 1f)] public float bounciness = 0.25f;
 	public bool isTrigger = false;
 
 	protected virtual void OnEnable(){

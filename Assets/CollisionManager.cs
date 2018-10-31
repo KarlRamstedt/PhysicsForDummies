@@ -11,6 +11,7 @@ public class CollisionManager : MonoBehaviour {
 	public List<Collider2DBase> colliders = new List<Collider2DBase>();
 	public List<RigidBod2D> rigidbodies = new List<RigidBod2D>();
 
+//	List<Collision> collisionData = new List<Collision>();
 	Dictionary<GameObject, List<GameObject>> collisions = new Dictionary<GameObject, List<GameObject>>(); //Does order affect result? | CollisionExit will not run if object is disabled, is that a problem?
 
 #region Singleton
@@ -20,7 +21,7 @@ public class CollisionManager : MonoBehaviour {
 			if (instance == null){ //Lazy-load object or create it in case somebody forgot to add it to the scene
 				if (ApplicationIsQuitting)
 					return null;
-				GameObject go = new GameObject("(Singleton) CollisionManager"); //Optionally enter a more descriptive object name
+				GameObject go = new GameObject("(Singleton) CollisionManager");
 				go.AddComponent<CollisionManager>(); //AddComponent runs awake function before continuing
 				DontDestroyOnLoad(go);
 			}
@@ -59,7 +60,7 @@ public class CollisionManager : MonoBehaviour {
 			rigidbodies[i].UpdatePosition();
 		}
 
-		for (int solverIterations = 0; solverIterations < 5; solverIterations++){ //Improves accuracy but makes callbacks run multiple times
+		for (int solverIterations = 0; solverIterations < 9; solverIterations++){ //Improves accuracy but makes callbacks run multiple times
 			for (int i = 0, len = colliders.Count; i < len; i++){
 				for (int j = i+1; j < len; j++){
 					CalculateCollision(colliders[i], colliders[j]);
@@ -77,7 +78,7 @@ public class CollisionManager : MonoBehaviour {
 				BoxBox(col1, col2);
 			} else if (_col2 is CircleCol2D){
 				var col2 = _col2 as CircleCol2D;
-				BoxSphere(col1, col2);
+				BoxCircle(col1, col2);
 			}
 
 		} else if (_col1 is CircleCol2D){
@@ -85,7 +86,7 @@ public class CollisionManager : MonoBehaviour {
 
 			if (_col2 is BoxCol2D){
 				var col2 = _col2 as BoxCol2D;
-				BoxSphere(col2, col1);
+				BoxCircle(col2, col1);
 			} else if (_col2 is CircleCol2D){
 				var col2 = _col2 as CircleCol2D;
 				CircleCircle(col1, col2);
@@ -113,30 +114,46 @@ public class CollisionManager : MonoBehaviour {
 			var offset1 = collisionPoint - closestPointOnCircle1;
 			var offset2 = collisionPoint - closestPointOnCircle2;
 
+			Debug.DrawLine(collisionPoint, collisionPoint + dir, Color.green);
+
 			var rb1 = _col.GetComponent<RigidBod2D>();
 			var rb2 = _col2.GetComponent<RigidBod2D>();
 
 			//https://stackoverflow.com/questions/573084/how-to-calculate-bounce-angle
-			var perpendicularVelocity = Vector2.Dot(rb1.velocity, -dir) * -dir;
-			var paralellVelocity = rb1.velocity - perpendicularVelocity;
+
 			var avgFriction = Mathf.Clamp01(1 - (_col.friction + _col2.friction) / 2);
-			var avgBounciness = (_col.bounciness + _col2.bounciness) / 2;
+			var avgBounciness = Mathf.Clamp01((_col.bounciness + _col2.bounciness) / 2);
 
 			if (rb1 != null && !rb1.isKinematic){
 				if (rb2 != null && !rb2.isKinematic){
-					var massFrac = rb1.mass / (rb1.mass+rb2.mass);
-					rb1.Move(offset1 * (1-massFrac));
-					rb1.velocity = paralellVelocity * avgFriction - perpendicularVelocity * (1-massFrac) * avgBounciness;
-					rb2.Move(offset2 * massFrac);
-					rb2.velocity = -paralellVelocity * avgFriction + perpendicularVelocity * massFrac * avgBounciness; //TODO: Do proper mass-dependent calc
-				} else{
+					var massFraction = rb1.mass / (rb1.mass+rb2.mass); //Simply constraining will make in-elastic collisions work great with verlet integration. Elasticity is ignored tho
+					rb1.Move(offset1 * (1-massFraction));
+					rb2.Move(offset2 * massFraction);
+
+//					var separatingVelocity = Vector2.Dot(rb1.velocity - rb2.velocity, dir);
+//					if (separatingVelocity > 0)
+//						return;
+//					var newSepVelocity = -separatingVelocity * avgBounciness; //Bounce = restitution?
+//					var deltaVelocity = newSepVelocity - separatingVelocity;
+//					var impulse = deltaVelocity / (1/rb1.mass + 1/rb2.mass);
+//					var impulsePerIMass = dir * impulse;
+//					print(deltaVelocity);
+//					rb1.velocity = rb1.velocity + impulsePerIMass * -(1/rb1.mass);
+//					rb2.velocity = rb2.velocity + impulsePerIMass * 1/rb2.mass;
+
+//					var closingVelocity = rb1PerpendicularVelocity + rb2PerpendicularVelocity;
+				} else {
 					rb1.Move(offset1 * 2);
-					rb1.velocity = paralellVelocity * avgFriction - perpendicularVelocity * avgBounciness;
+					var rb1PerpendicularVelocity = Vector2.Dot(rb1.velocity, -dir) * -dir;
+					var rb1ParalellVelocity = rb1.velocity - rb1PerpendicularVelocity;
+					rb1.velocity = rb1ParalellVelocity * avgFriction - rb1PerpendicularVelocity * avgBounciness;
 				}
-			} else{
+			} else {
 				if (rb2 != null && !rb2.isKinematic){
 					rb2.Move(offset2 * 2);
-					rb2.velocity = paralellVelocity * avgFriction - perpendicularVelocity * avgBounciness;
+					var rb2PerpendicularVelocity = Vector2.Dot(rb2.velocity, dir) * dir;
+					var rb2ParalellVelocity = rb2.velocity - rb2PerpendicularVelocity;
+					rb2.velocity = rb2ParalellVelocity * avgFriction - rb2PerpendicularVelocity * avgBounciness;
 				}
 			}
 		}// else
@@ -150,7 +167,7 @@ public class CollisionManager : MonoBehaviour {
 		return boxContactPoint;
 	}
 
-	void BoxSphere(BoxCol2D _boxCol, CircleCol2D _circleCol){
+	void BoxCircle(BoxCol2D _boxCol, CircleCol2D _circleCol){
 		var spherePos = _circleCol.transform.position.ToVec2();
 		var boxPos = _boxCol.transform.position.ToVec2();
 
@@ -176,11 +193,11 @@ public class CollisionManager : MonoBehaviour {
 				spherePos = dir * (_boxCol.Bounds.x + _boxCol.Bounds.y + _circleCol.Radius); //Offset sphere outside box
 				boxContactPoint = GetBoxContactPoint(boxPos, spherePos, _boxCol);
 				normal = (spherePos - boxContactPoint).normalized;
-				closestPointOnCircle = spherePos -normal.normalized * _circleCol.Radius;
+				closestPointOnCircle = spherePos - normal * _circleCol.Radius;
 				spherePos += boxContactPoint - closestPointOnCircle;
 			}
 
-			closestPointOnCircle = spherePos - normal.normalized * _circleCol.Radius;
+			closestPointOnCircle = spherePos - normal * _circleCol.Radius;
 			var offset = boxContactPoint - closestPointOnCircle; //ALSO NORMAL? | NOT ROBUST, WILL GENERATE WRONG NUMBERS IF SPHERE CENTER OVERLAPS BOX
 
 			if (boxRB != null && !boxRB.isKinematic){

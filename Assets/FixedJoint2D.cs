@@ -18,10 +18,11 @@ public class FixedJoint2D : MonoBehaviour {
 	void FixedUpdate(){
 		var delta = connectedBody.transform.position.ToVec2() - transform.position.ToVec2();
 
-        if (Mathf.Approximately(delta.magnitude, length))
+		var deltaMag = delta.magnitude;
+		if (Mathf.Approximately(deltaMag, length))
             return;
 		
-		float lengthDelta = delta.magnitude - length;
+		float lengthDelta = deltaMag - length;
 		delta = delta.normalized * lengthDelta;
 
 		if (!rb.isKinematic && !connectedBody.isKinematic){

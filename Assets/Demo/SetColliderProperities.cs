@@ -4,29 +4,62 @@ using UnityEngine;
 
 public class SetColliderProperities : MonoBehaviour {
 
-	public GameObject objectToChange;
+	public Material selectedMaterial;
+	Material normalMaterial;
 
-	Collider2DBase col;
-	RigidBod2D rb;
+	UnityEngine.UI.Slider[] sliders;
+	Collider2DBase selectedCollider;
+	RigidBod2D selectedRB;
 
-	void Start(){
-		col = objectToChange.GetComponent<Collider2DBase>();
-		rb = objectToChange.GetComponent<RigidBod2D>();
-		var slider = GetComponentsInChildren<UnityEngine.UI.Slider>();
-		slider[0].value = col.bounciness;
-		slider[1].value = col.friction;
-//		slider[2].value = rb.mass;
+	void Awake(){
+		sliders = GetComponentsInChildren<UnityEngine.UI.Slider>();
 	}
-	
+
+	void Update(){
+		var point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		point.z = 0;
+
+		if (Input.GetMouseButtonDown(0)){
+			var col = CollisionManager.Inst.colliders;
+			for (int i = 0; i < col.Count; i++){
+				if (col[i].Overlapping(point)){
+					if (selectedCollider != null)
+						selectedCollider.gameObject.GetComponent<Renderer>().material = normalMaterial;
+					
+					selectedCollider = col[i];
+					selectedRB = col[i].gameObject.GetComponent<RigidBod2D>();
+					var rend = col[i].gameObject.GetComponent<Renderer>();
+					if (rend != null){
+						normalMaterial = rend.material;
+						rend.material = selectedMaterial;
+					}
+					if (sliders.Length > 0) sliders[0].value = selectedCollider.bounciness;
+					if (sliders.Length > 1) sliders[1].value = selectedCollider.friction;
+					if (sliders.Length > 2){
+						if (selectedRB != null){
+							sliders[2].interactable = true;
+							sliders[2].value = selectedRB.mass;
+						} else
+							sliders[2].interactable = false;
+					}
+					break;
+				}
+			}
+		}
+	}
+
 	public void SetBounciness(float _bounce){
-		col.bounciness = _bounce;
+		if (selectedCollider != null)
+			selectedCollider.bounciness = _bounce;
 	}
 
 	public void SetFriction(float _friction){
-		col.friction = _friction;
+		if (selectedCollider != null)
+			selectedCollider.friction = _friction;
 	}
 
 	public void SetMass(float _mass){
-		rb.mass = _mass;
+		if (selectedRB != null)
+			selectedRB.mass = _mass;
 	}
 }

@@ -20,10 +20,11 @@ public class BabbySpringJoint : MonoBehaviour {
 	void FixedUpdate(){ //F = k * x
 		var delta = connectedBody.transform.position.ToVec2() - transform.position.ToVec2();
 
-        if (Mathf.Approximately(delta.magnitude, restingLength))
-            return;
-
-		float lengthDelta = delta.magnitude - restingLength;
+		var deltaMag = delta.magnitude;
+		if (Mathf.Approximately(deltaMag, restingLength))
+			return;
+		
+		float lengthDelta = deltaMag - restingLength;
 		delta = delta.normalized * lengthDelta;
 		var force = delta * springConstant;
 
@@ -36,7 +37,7 @@ public class BabbySpringJoint : MonoBehaviour {
 			var dampingRatio = connectedBody.velocity * damping;
 			connectedBody.AddForce(Vector2.ClampMagnitude(-force - dampingRatio, force.magnitude), ForceMode.Force);
 		} else if (connectedBody.isKinematic){
-			var dampingRatio = rb.velocity * damping; //TODO: FIX
+			var dampingRatio = rb.velocity * damping; //Damping seems kind of off
 			rb.AddForce(Vector2.ClampMagnitude(force - dampingRatio, force.magnitude), ForceMode.Force);
 		}
 	}

@@ -19,6 +19,8 @@ public class RigidBod2D : MonoBehaviour {
 		transform.Translate(_movementDelta.ToVec3()); //previousPosition += _movementDelta;
 	}
 
+
+
 	void Awake(){
 		velocity = force; // / mass * Time.fixedDeltaTime
 	}
@@ -40,7 +42,7 @@ public class RigidBod2D : MonoBehaviour {
 				velocity += _force;
 				break;
 			case ForceMode.Force:
-				force += _force; //Correct?
+				force += _force;
 				break;
 			case ForceMode.Impulse:
 				force += _force / Time.fixedDeltaTime; //Correct?
@@ -79,13 +81,11 @@ public class RigidBod2D : MonoBehaviour {
 		var timeDelta = Time.fixedDeltaTime;
 		if (useGravity)
 			force += mass * CollisionManager.gravity; //F = m * a
-//		var velocityDelta = forces / mass * timeDelta;
-//		var movementDelta = (velocity + velocityDelta) * timeDelta;
+		
 		var newPos = transform.position.ToVec2() * 2 - previousPosition + force * timeDelta*timeDelta / mass;
 		force = Vector2.zero;
 
 		previousPosition = transform.position;
 		transform.position = newPos.ToVec3();
-//		transform.Translate(movementDelta.ToVec3());
 	}
 }

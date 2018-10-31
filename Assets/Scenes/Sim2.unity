@@ -142,12 +142,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0}
+  force: {x: 0, y: 0}
   angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 0
   isKinematic: 1
-  forces: {x: 0, y: 0}
 --- !u!114 &29078681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -161,6 +160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 765856720}
   springConstant: 99
+  autoConfigureLength: 0
   restingLength: 0
   damping: 9
 --- !u!4 &29078682
@@ -415,12 +415,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0}
+  force: {x: 0, y: 0}
   angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 0
   isKinematic: 1
-  forces: {x: 0, y: 0}
 --- !u!114 &291894071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -434,6 +433,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 1514164318}
   springConstant: 9
+  autoConfigureLength: 0
   restingLength: 3
   damping: 0.5
 --- !u!114 &291894072
@@ -624,12 +624,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0}
+  force: {x: 0, y: 0}
   angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 0
-  forces: {x: 0, y: 0}
 --- !u!23 &765856721
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -798,6 +797,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 2054035833}
   springConstant: 32
+  autoConfigureLength: 0
   restingLength: 3
   damping: 0.5
 --- !u!114 &765856727
@@ -1207,12 +1207,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0}
+  force: {x: 0, y: 0}
   angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 0
-  forces: {x: 0, y: 0}
 --- !u!114 &1430623562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1226,6 +1225,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 765856720}
   springConstant: 32
+  autoConfigureLength: 0
   restingLength: 3
   damping: 0.5
 --- !u!114 &1430623563
@@ -1471,12 +1471,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0}
+  force: {x: 0, y: 0}
   angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 0
-  forces: {x: 0, y: 0}
 --- !u!114 &1514164319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1490,6 +1489,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 1617552705}
   springConstant: 9
+  autoConfigureLength: 0
   restingLength: 3
   damping: 0.5
 --- !u!114 &1514164320
@@ -1631,7 +1631,7 @@ MonoBehaviour:
   m_Text: 'Balls are draggable. The large circle is kinematic and the connected springs
     are more loose.
 
-    Press 1, 2, 3 to change scene.
+    Press number keys to switch level.
 
     Press R to reset level.
 
@@ -1774,12 +1774,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0}
+  force: {x: 0, y: 0}
   angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 0
-  forces: {x: 0, y: 0}
 --- !u!120 &1617552706
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -1894,6 +1893,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 291894070}
   springConstant: 9
+  autoConfigureLength: 0
   restingLength: 3
   damping: 0.5
 --- !u!114 &1617552709
@@ -2140,12 +2140,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb837f8e0fd0a19488576833b154b9c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  velocity: {x: 0, y: 0}
+  force: {x: 0, y: 0}
   angularVelocity: {x: 0, y: 0}
   mass: 1
   useGravity: 1
   isKinematic: 0
-  forces: {x: 0, y: 0}
 --- !u!114 &2054035834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2159,6 +2158,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   connectedBody: {fileID: 1430623561}
   springConstant: 32
+  autoConfigureLength: 0
   restingLength: 3
   damping: 0.5
 --- !u!114 &2054035835

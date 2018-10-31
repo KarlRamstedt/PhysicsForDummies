@@ -5,7 +5,7 @@
 public class RigidBod2D : MonoBehaviour {
 
 	public Vector2 force = Vector2.zero;
-	public Vector2 angularVelocity = Vector2.zero;
+//	public Vector2 angularVelocity = Vector2.zero; //TODO: Implement D:
 	public float mass = 1f;
 	public bool useGravity = true;
 	public bool isKinematic = false;
@@ -17,7 +17,7 @@ public class RigidBod2D : MonoBehaviour {
 	Vector2 previousPosition;
 
 	void Awake(){
-		velocity = force; // / mass * Time.fixedDeltaTime
+		velocity = force; // / mass * Time.fixedDeltaTime | Easier to just treat starting force value as starting velocity
 	}
 
 	void OnEnable(){
@@ -69,3 +69,15 @@ public class RigidBod2D : MonoBehaviour {
 		transform.position = newPos.ToVec3();
 	}
 }
+
+//TODO: more robust verlet integration (for "UpdatePosition" method):
+//1. Advance positions by 0.5dT
+//2. Apply half collision/friction
+//3. Compute(add?) forces
+//4. Advance velocities by dT
+//5. Calculate collision/friction
+//6. Apply half collision/friction
+//7. Advance positions by 0.5dT
+
+//Source: http://www.scitepress.org/Papers/2017/62693/62693.pdf
+//Could allegedly remove the need for multiple solverIterations.

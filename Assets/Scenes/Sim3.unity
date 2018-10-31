@@ -391,7 +391,7 @@ MonoBehaviour:
   m_Text: 'Click on balls to toggle gravitational pull on them (other balls are still
     affected by them though).
 
-    Press 1, 2, 3 to change scene.
+    Press number keys to switch level.
 
     Press R to reset level.
 

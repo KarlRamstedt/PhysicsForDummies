@@ -23,6 +23,10 @@ public class CircleCol2D : Collider2DBase {
 		set { radius = value; }
 	}
 
+	void Awake(){
+		print("X");
+	}
+
 	public override bool Overlapping(Vector2 _point){
 		return Vector2.Distance(transform.position, _point) < Radius;
 	}

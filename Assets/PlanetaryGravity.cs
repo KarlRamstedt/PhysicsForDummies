@@ -14,9 +14,9 @@ public class PlanetaryGravity : MonoBehaviour {
 				float force = gravitationalConstant * rabies[i].mass*rabies[j].mass/(distance*distance);
 				var dir = (otherPos-pos).normalized;
 				if (rabies[i].useGravity)
-					rabies[i].AddForce(dir*force, ForceMode.Force);
+					rabies[i].AddForce(dir*force);
 				if (rabies[j].useGravity)
-					rabies[j].AddForce(-dir*force, ForceMode.Force);
+					rabies[j].AddForce(-dir*force);
 			}
 		}
 	}

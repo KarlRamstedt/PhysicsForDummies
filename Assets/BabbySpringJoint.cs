@@ -31,14 +31,14 @@ public class BabbySpringJoint : MonoBehaviour {
 		if (!rb.isKinematic && !connectedBody.isKinematic){
 			var dampingRatio = (connectedBody.velocity - rb.velocity) * damping; //Relative velocity * damping factor
 			var forceMag = force.magnitude;
-			rb.AddForce(Vector2.ClampMagnitude(force + dampingRatio, forceMag), ForceMode.Force); //Make sure damping can't put force into negatives
-			connectedBody.AddForce(Vector2.ClampMagnitude(-force - dampingRatio, forceMag), ForceMode.Force); //Note: Mass is taken into account through the use of Force
+			rb.AddForce(Vector2.ClampMagnitude(force + dampingRatio, forceMag)); //Make sure damping can't put force into negatives
+			connectedBody.AddForce(Vector2.ClampMagnitude(-force - dampingRatio, forceMag)); //Note: Mass is taken into account through the use of Force
 		} else if (rb.isKinematic){
 			var dampingRatio = connectedBody.velocity * damping;
-			connectedBody.AddForce(Vector2.ClampMagnitude(-force - dampingRatio, force.magnitude), ForceMode.Force);
+			connectedBody.AddForce(Vector2.ClampMagnitude(-force - dampingRatio, force.magnitude));
 		} else if (connectedBody.isKinematic){
 			var dampingRatio = rb.velocity * damping; //Damping seems kind of off
-			rb.AddForce(Vector2.ClampMagnitude(force - dampingRatio, force.magnitude), ForceMode.Force);
+			rb.AddForce(Vector2.ClampMagnitude(force - dampingRatio, force.magnitude));
 		}
 	}
 }

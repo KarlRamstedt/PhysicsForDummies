@@ -2,7 +2,7 @@
 
 public class SetSolverIterations : MonoBehaviour {
 
-	public int solverIterations = 1;
+	[Range(1, 99)] public int solverIterations = 1;
 
 	int oldValue;
 

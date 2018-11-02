@@ -9,11 +9,11 @@ public abstract class Collider2DBase : MonoBehaviour {
 	public bool isTrigger = false;
 
 	protected virtual void OnEnable(){
-		CollisionManager.Inst.RegisterCollider(this);
+		CollisionManager.Inst.RegisterComponent(this);
 	}
 	protected virtual void OnDisable(){
 		if (!CollisionManager.ApplicationIsQuitting)
-			CollisionManager.Inst.DeRegisterCollider(this);
+			CollisionManager.Inst.DeRegisterComponent(this);
 	}
 
 	public abstract bool Overlapping(Vector2 _point);

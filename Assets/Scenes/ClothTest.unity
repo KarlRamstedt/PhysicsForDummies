@@ -285,6 +285,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &6234958
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -523,6 +524,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &10262503
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -610,6 +612,7 @@ MonoBehaviour:
   mass: 1
   useGravity: 1
   isKinematic: 1
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &29078681
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -687,6 +690,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &106771496
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -911,6 +915,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &178582033
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1310,6 +1315,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 0
   isKinematic: 1
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &241594980
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1388,6 +1394,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &249502901
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1710,6 +1717,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &291894071
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1927,6 +1935,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &323985478
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2167,6 +2176,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &435677067
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2391,6 +2401,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &477733736
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2790,6 +2801,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &496333223
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3003,6 +3015,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &526675612
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -3110,6 +3123,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &542469795
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3351,6 +3365,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &576948186
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3588,6 +3603,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &583497159
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3963,6 +3979,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &680490315
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4228,6 +4245,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &687147039
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4306,6 +4324,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 0
   isKinematic: 1
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &732013201
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4528,6 +4547,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &748298926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4764,6 +4784,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 1
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &765856721
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -4988,6 +5009,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &809244665
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5225,6 +5247,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &851722228
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5600,6 +5623,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &930020284
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -5707,6 +5731,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &952524423
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6082,6 +6107,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &983347561
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -6188,6 +6214,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1084544168
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6410,6 +6437,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1114263330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6622,7 +6650,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1252072186}
   m_Layer: 0
-  m_Name: Cloth
+  m_Name: Springy Cloth
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6711,6 +6739,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!4 &1330025099
 Transform:
   m_ObjectHideFlags: 0
@@ -6952,6 +6981,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1373218160
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7188,6 +7218,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!120 &1377744586
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -7425,6 +7456,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1403605288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7901,6 +7933,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1430623562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7970,6 +8003,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1463680191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8311,6 +8345,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1514164319
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8434,6 +8469,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1575819015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8805,6 +8841,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &1595379087
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -8924,6 +8961,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!120 &1617552706
 LineRenderer:
   m_ObjectHideFlags: 0
@@ -9135,6 +9173,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1658778499
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9376,6 +9415,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!4 &1678189389
 Transform:
   m_ObjectHideFlags: 0
@@ -9617,6 +9657,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1769322602
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9857,6 +9898,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1866724733
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10079,6 +10121,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &1940774698
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10538,6 +10581,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &2025237355
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -10815,6 +10859,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &2054035834
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11026,6 +11071,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &2079493034
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -11129,6 +11175,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!23 &2093897524
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -11204,6 +11251,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 1
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &2131167151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11311,6 +11359,7 @@ MonoBehaviour:
   mass: 0.1
   useGravity: 1
   isKinematic: 0
+  previousPosition: {x: 0, y: 0}
 --- !u!114 &2137068232
 MonoBehaviour:
   m_ObjectHideFlags: 0

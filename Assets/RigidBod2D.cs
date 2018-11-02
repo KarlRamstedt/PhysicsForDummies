@@ -14,28 +14,35 @@ public class RigidBod2D : MonoBehaviour {
 		get { return (transform.position.ToVec2()-previousPosition) / Time.fixedDeltaTime; } //V = (pos-prevPos)/T
 		set { previousPosition = transform.position.ToVec2() - value * Time.fixedDeltaTime; } //prevPos = pos - V*T
 	}
-	Vector2 previousPosition;
+	public Vector2 previousPosition;
 
 	void Awake(){
-		velocity = force; // / mass * Time.fixedDeltaTime | Easier to just treat starting force value as starting velocity
+		velocity = force; //Verlet isn't self-starting | Easier to just treat starting force value as starting velocity | / mass * Time.fixedDeltaTime
 	}
 
 	void OnEnable(){
-		CollisionManager.Inst.RegisterRigidbody(this);
+		CollisionManager.Inst.RegisterComponent(this);
 	}
 	void OnDisable(){
 		if (!CollisionManager.ApplicationIsQuitting)
-			CollisionManager.Inst.DeRegisterRigidbody(this);
+			CollisionManager.Inst.DeRegisterComponent(this);
 	}
 
 	public void Move(Vector2 _movementDelta){
 		transform.Translate(_movementDelta.ToVec3());
 	}
 
+	public void AddForce(Vector2 _force){
+		force += _force;
+	}
+	public void AddForce(float x, float y){
+		force.x += x;
+		force.y += y;
+	}
 	public void AddForce(Vector2 _force, ForceMode _mode){ //F = mass * meters/seconds^2
 		switch (_mode){
 			case ForceMode.Acceleration:
-				velocity += _force * Time.fixedDeltaTime; //Correct?
+				velocity += _force * Time.fixedDeltaTime;
 				break;
 			case ForceMode.VelocityChange:
 				velocity += _force;
@@ -44,7 +51,7 @@ public class RigidBod2D : MonoBehaviour {
 				force += _force;
 				break;
 			case ForceMode.Impulse:
-				force += _force / Time.fixedDeltaTime; //Correct?
+				force += _force / Time.fixedDeltaTime;
 				break;
 			default:
 				Debug.LogWarning("Unsupported ForceMode");
@@ -53,7 +60,6 @@ public class RigidBod2D : MonoBehaviour {
 	}
 
 	public void UpdatePosition(){
-//		print(velocity);
 		if (isKinematic){
 			velocity = Vector2.zero;
 			return;

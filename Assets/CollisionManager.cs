@@ -35,12 +35,13 @@ public class CollisionManager : MonoBehaviour {
 	}
 #endregion
 
-	public void RegisterComponent(Constraint _con){
-		if (!constraints.Contains(_con))
-			constraints.Add(_con);
+#region RegisterComponents
+	public void RegisterComponent(RigidBod2D _col){
+		if (!rigidbodies.Contains(_col))
+			rigidbodies.Add(_col);
 	}
-	public void DeRegisterComponent(Constraint _con){
-		constraints.Remove(_con);
+	public void DeRegisterComponent(RigidBod2D _col){
+		rigidbodies.Remove(_col);
 	}
 	public void RegisterComponent(Collider2DBase _col){
 		if (!colliders.Contains(_col))
@@ -49,13 +50,14 @@ public class CollisionManager : MonoBehaviour {
 	public void DeRegisterComponent(Collider2DBase _col){
 		colliders.Remove(_col);
 	}
-	public void RegisterComponent(RigidBod2D _col){
-		if (!rigidbodies.Contains(_col))
-			rigidbodies.Add(_col);
+	public void RegisterComponent(Constraint _con){
+		if (!constraints.Contains(_con))
+			constraints.Add(_con);
 	}
-	public void DeRegisterComponent(RigidBod2D _col){
-		rigidbodies.Remove(_col);
+	public void DeRegisterComponent(Constraint _con){
+		constraints.Remove(_con);
 	}
+#endregion
 	
 	void FixedUpdate(){ //Runs 50 times per second (by default)
 		for (int i = 0, len = rigidbodies.Count; i < len; i++){
@@ -103,25 +105,25 @@ public class CollisionManager : MonoBehaviour {
 //		
 //	}
 
-	void CircleCircle(CircleCol2D _col, CircleCol2D _col2){
-		var pos = _col.transform.position.ToVec2();
-		var otherPos = _col2.transform.position.ToVec2();
-		var radius1 = _col.Radius;
+	void CircleCircle(CircleCol2D _col1, CircleCol2D _col2){
+		var pos1 = _col1.transform.position.ToVec2(); //Cache some variables for performance
+		var pos2 = _col2.transform.position.ToVec2();
+		var radius1 = _col1.Radius;
 		var radius2 = _col2.Radius;
 
-		if (pos.Distance(otherPos) < radius1 + radius2){ //if overlapping
+		if (pos1.Distance(pos2) < radius1 + radius2){ //if overlapping
 //			CallbackCheck(_col, _col2);
-			if (_col.isTrigger || _col2.isTrigger)
+			if (_col1.isTrigger || _col2.isTrigger)
 				return;
 			
-			var dir = (otherPos - pos).normalized;
-			var penetration = (otherPos - dir * radius1) - (pos + dir * radius2);
+			var dir = (pos2 - pos1).normalized;
+			var penetration = (pos2 - dir * radius1) - (pos1 + dir * radius2); //Essentially: _col2.ClosestPoint(pos) - _col.ClosestPoint(otherPos);
 
-			var rb1 = _col.GetComponent<RigidBod2D>();
+			var rb1 = _col1.GetComponent<RigidBod2D>();
 			var rb2 = _col2.GetComponent<RigidBod2D>();
 
 //			var avgFriction = Mathf.Clamp01(1 - (_col.friction + _col2.friction) / 2);
-			var bounciness = Mathf.Clamp01((_col.bounciness + _col2.bounciness) / 2); //Completely inelastic when final kinetic energy is 50% of original
+			var bounciness = Mathf.Clamp01((_col1.bounciness + _col2.bounciness) / 2); //Completely inelastic when final kinetic energy is 50% of original
 
 			if (rb1 != null && !rb1.isKinematic){
 				if (rb2 != null && !rb2.isKinematic){
@@ -148,24 +150,24 @@ public class CollisionManager : MonoBehaviour {
 	}
 
 	void BoxCircle(BoxCol2D _boxCol, CircleCol2D _circleCol){
-		var circlePos = _circleCol.transform.position.ToVec2();
-//		var boxPos = _boxCol.transform.position.ToVec2();
-//		var boxBounds = _boxCol.Bounds;
-	
-		Vector2 closestPointOnBox = _boxCol.PointClampedToBox(circlePos); //https://yal.cc/rectangle-circle-intersection-test/
-		var delta = circlePos - closestPointOnBox;
+		var circlePos = _circleCol.transform.position.ToVec2(); //Cache some variables for performance
 		var radius = _circleCol.Radius;
+		var boxPos = _boxCol.transform.position.ToVec2();
+		var boxBounds = _boxCol.Bounds;
+	
+		Vector2 closestPointOnBox; //Essentially: _boxCol.PointClampedToBox(circlePos) | -5% of total method execution time running it locally
+		closestPointOnBox.x = Mathf.Max(boxPos.x-boxBounds.x, Mathf.Min(circlePos.x, boxPos.x + boxBounds.x));
+		closestPointOnBox.y = Mathf.Max(boxPos.y-boxBounds.y, Mathf.Min(circlePos.y, boxPos.y + boxBounds.y));
+
+		var delta = circlePos - closestPointOnBox;
 	
 		if (delta.x * delta.x + delta.y * delta.y < radius * radius){ //If distance to clamped point is smaller than circle radius then they are in contact || Squared distance for efficiency
-			//			CallbackCheck(_boxCol, _circleCol);
+//			CallbackCheck(_boxCol, _circleCol);
 			if (_boxCol.isTrigger || _circleCol.isTrigger)
 				return;
 	
 			var boxRB = _boxCol.GetComponent<RigidBod2D>();
 			var sphereRB = _circleCol.GetComponent<RigidBod2D>();
-	
-//			var avgFriction = Mathf.Clamp01(1 - (_boxCol.friction + _circleCol.friction) / 2);
-//			var avgBounciness = Mathf.Max((_boxCol.bounciness + _circleCol.bounciness) / 2, 0);
 	
 			Vector2 closestPointOnCircle;
 			if (_boxCol.Overlapping(circlePos)){
@@ -194,7 +196,7 @@ public class CollisionManager : MonoBehaviour {
 //			ExitCallbackCheck(_boxCol, _circleCol);
 	}
 
-
+#region CollisionCallbacks
 	//TODO: Proper collision data structure and prevent callbacks from running multiple times with solverIterations > 1 | Use Unity's own? List<Collision> collisionData = new List<Collision>();
 	void CallbackCheck(Collider2DBase _col, Collider2DBase _col2){
 		if (_col.gameObject.GetComponent<RigidBod2D>() != null ||
@@ -276,6 +278,7 @@ public interface IStayCallback {
 public interface IExitCallback {
 	void OnColExit(Collider2DBase _col);
 }
+#endregion
 
 public static class Vector2Extensions {
 	/// <summary>

@@ -16,7 +16,7 @@ public class FixedJoint2D : Constraint {
 	}
 
 	public override void Constrain(){
-		var delta = connectedBody.transform.position.ToVec2() - transform.position.ToVec2();
+		var delta = connectedBody.transform.position.ToVec2() - rb.transform.position.ToVec2();
 
 		var deltaMag = delta.magnitude;
 		if (Mathf.Approximately(deltaMag, length))

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class BoxCol2D : Collider2DBase {
+public sealed class BoxCol2D : Collider2DBase {
 
 	public Vector2 Bounds {
 		get {
@@ -22,7 +22,7 @@ public class BoxCol2D : Collider2DBase {
 	public override Vector2 ClosestPoint(Vector2 _point){
 		if (Overlapping(_point)){
 			return PointClampedToBox(_point);
-		} else { //TODO: Set properly
+		} else {
 			return ClosestInsideOut(_point);
 		}
 	}
@@ -40,19 +40,19 @@ public class BoxCol2D : Collider2DBase {
 		var pos = transform.position.ToVec2();
 		var bounds = Bounds;
 
-		var distanceToPositiveBounds = pos+bounds - _point;
-		var distanceToNegativeBounds = -(pos-bounds - _point);
-		var smallestX = Mathf.Min(distanceToPositiveBounds.x, distanceToNegativeBounds.x);
-		var smallestY = Mathf.Min(distanceToPositiveBounds.y, distanceToNegativeBounds.y);
+		var deltaToPositiveBounds = pos+bounds - _point;
+		var deltaToNegativeBounds = -(pos-bounds - _point);
+		var smallestX = Mathf.Min(deltaToPositiveBounds.x, deltaToNegativeBounds.x);
+		var smallestY = Mathf.Min(deltaToPositiveBounds.y, deltaToNegativeBounds.y);
 		var smallestDistance = Mathf.Min(smallestX, smallestY);
 
-		if (smallestDistance == distanceToPositiveBounds.x){
+		if (smallestDistance == deltaToPositiveBounds.x){
 			return new Vector2(pos.x+bounds.x, _point.y);
 
-		} else if (smallestDistance == distanceToNegativeBounds.x){
+		} else if (smallestDistance == deltaToNegativeBounds.x){
 			return new Vector2(pos.x-bounds.x, _point.y);
 
-		} else if (smallestDistance == distanceToPositiveBounds.y){
+		} else if (smallestDistance == deltaToPositiveBounds.y){
 			return new Vector2(_point.x, pos.y+bounds.y);
 
 		} else {

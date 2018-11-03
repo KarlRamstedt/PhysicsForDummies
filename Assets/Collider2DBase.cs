@@ -8,6 +8,11 @@ public abstract class Collider2DBase : MonoBehaviour {
 	[Range(0f, 1f)] public float bounciness = 0.25f;
 	public bool isTrigger = false;
 
+	[HideInInspector] public new Transform transform; //Caching for performance
+	protected virtual void Awake(){
+		transform = GetComponent<Transform>();
+	}
+
 	protected virtual void OnEnable(){
 		CollisionManager.Inst.RegisterComponent(this);
 	}
@@ -20,6 +25,7 @@ public abstract class Collider2DBase : MonoBehaviour {
 	public abstract Vector2 ClosestPoint(Vector2 _point);
 
 	protected virtual void OnDrawGizmosSelected(){
+		transform = GetComponent<Transform>();
 		Gizmos.color = Color.green;
 	}
 }

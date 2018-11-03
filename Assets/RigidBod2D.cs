@@ -16,7 +16,9 @@ public class RigidBod2D : MonoBehaviour {
 	}
 	public Vector2 previousPosition;
 
+	[HideInInspector] public new Transform transform; //Caching for performance
 	void Awake(){
+		transform = GetComponent<Transform>();
 		velocity = force; //Verlet isn't self-starting | Easier to just treat starting force value as starting velocity | / mass * Time.fixedDeltaTime
 	}
 
@@ -29,7 +31,7 @@ public class RigidBod2D : MonoBehaviour {
 	}
 
 	public void Move(Vector2 _movementDelta){
-		transform.Translate(_movementDelta.ToVec3());
+		transform.Translate(_movementDelta);
 	}
 
 	public void AddForce(Vector2 _force){
@@ -72,7 +74,7 @@ public class RigidBod2D : MonoBehaviour {
 		force = Vector2.zero;
 
 		previousPosition = transform.position;
-		transform.position = newPos.ToVec3();
+		transform.position = newPos;
 	}
 }
 

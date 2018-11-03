@@ -26,3 +26,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Newton'sCradleTest.unity
     guid: 6a07b4c3fad69494b8b1620eeca4b7fa
+  - enabled: 1
+    path: Assets/Scenes/Stresstest.unity
+    guid: 5a62614c8b7c41c48aac84cfb178dfe7

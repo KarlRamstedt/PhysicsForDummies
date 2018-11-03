@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class CircleCol2D : Collider2DBase {
+public sealed class CircleCol2D : Collider2DBase {
 
 	[SerializeField] float radius = 0.5f;
 
@@ -21,10 +21,6 @@ public class CircleCol2D : Collider2DBase {
 				return radius * scale.z;
 		}
 		set { radius = value; }
-	}
-
-	void Awake(){
-		print("X");
 	}
 
 	public override bool Overlapping(Vector2 _point){

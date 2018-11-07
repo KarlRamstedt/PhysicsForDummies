@@ -402,7 +402,7 @@ MonoBehaviour:
   friction: 0.25
   bounciness: 0.25
   isTrigger: 0
-  transform: {fileID: 0}
+  transform: {fileID: 212979957}
 --- !u!23 &212979955
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2163,7 +2163,7 @@ MonoBehaviour:
   friction: 0.25
   bounciness: 0.25
   isTrigger: 0
-  transform: {fileID: 0}
+  transform: {fileID: 1715082474}
 --- !u!23 &1715082472
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2439,7 +2439,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2459,7 +2459,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Set Red Ball Properties
+  m_Text: Selected Ball Properties
 --- !u!222 &1788021310
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2566,7 +2566,7 @@ MonoBehaviour:
   friction: 0.25
   bounciness: 0.25
   isTrigger: 0
-  transform: {fileID: 0}
+  transform: {fileID: 1813410639}
 --- !u!23 &1813410637
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -2653,7 +2653,7 @@ MonoBehaviour:
   friction: 0.25
   bounciness: 0.25
   isTrigger: 0
-  transform: {fileID: 0}
+  transform: {fileID: 1817799274}
 --- !u!23 &1817799272
 MeshRenderer:
   m_ObjectHideFlags: 0

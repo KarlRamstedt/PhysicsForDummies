@@ -4,15 +4,17 @@
 public class DragColliderWithMouse : MonoBehaviour {
 
 	BabbySpringJoint joint;
+	Camera cam;
 
 	void Start(){
+		cam = Camera.main;
 		GetComponent<RigidBod2D>().isKinematic = true;
 		joint = GetComponent<BabbySpringJoint>();
 		joint.enabled = false;
 	}
 
 	void Update(){
-		var point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		var point = cam.ScreenToWorldPoint(Input.mousePosition);
 		point.z = 0;
 
 		if (Input.GetMouseButtonDown(0)){
@@ -31,7 +33,6 @@ public class DragColliderWithMouse : MonoBehaviour {
 			joint.connectedBody = null;
 		}
 		if (Input.GetMouseButton(0)){
-//			GetComponent<BabbySpringJoint>().connectedBody.ClearForce();
 			transform.position = point;
 		}
 	}

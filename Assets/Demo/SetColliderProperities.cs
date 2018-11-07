@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class SetColliderProperities : MonoBehaviour {
@@ -10,13 +9,15 @@ public class SetColliderProperities : MonoBehaviour {
 	UnityEngine.UI.Slider[] sliders;
 	Collider2DBase selectedCollider;
 	RigidBod2D selectedRB;
+	Camera cam;
 
 	void Awake(){
+		cam = Camera.main;
 		sliders = GetComponentsInChildren<UnityEngine.UI.Slider>();
 	}
 
 	void Update(){
-		var point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+		var point = cam.ScreenToWorldPoint(Input.mousePosition);
 		point.z = 0;
 
 		if (Input.GetMouseButtonDown(0)){

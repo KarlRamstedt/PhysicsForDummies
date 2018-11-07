@@ -14,11 +14,11 @@ public class BabbySpringJoint : MonoBehaviour {
 	void Awake(){
 		rb = GetComponent<RigidBod2D>();
 		if (autoConfigureLength)
-			restingLength = (connectedBody.transform.position.ToVec2() - transform.position.ToVec2()).magnitude;
+			restingLength = (connectedBody.transform.position.ToVec2() - rb.transform.position.ToVec2()).magnitude;
 	}
 
-	void FixedUpdate(){ //F = k * x
-		var delta = connectedBody.transform.position.ToVec2() - transform.position.ToVec2();
+	void FixedUpdate(){ //Force = springConstant * lengthDelta
+		var delta = connectedBody.transform.position.ToVec2() - rb.transform.position.ToVec2();
 
 		var deltaMag = delta.magnitude;
 		if (Mathf.Approximately(deltaMag, restingLength))

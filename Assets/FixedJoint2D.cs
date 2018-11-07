@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(RigidBod2D))]
-public class FixedJoint2D : Constraint {
+public sealed class FixedJoint2D : Constraint {
 
 	public RigidBod2D connectedBody;
 	[Tooltip("Set length equal to distance between this and connectedBody at start.")]
@@ -12,7 +12,7 @@ public class FixedJoint2D : Constraint {
 	void Awake(){
 		rb = GetComponent<RigidBod2D>();
 		if (autoConfigureLength)
-			length = (connectedBody.transform.position.ToVec2() - transform.position.ToVec2()).magnitude;
+			length = (connectedBody.transform.position.ToVec2() - rb.transform.position.ToVec2()).magnitude;
 	}
 
 	public override void Constrain(){

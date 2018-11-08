@@ -117,7 +117,7 @@ public class CollisionManager : MonoBehaviour {
 				return;
 			
 			var dir = (pos2 - pos1).normalized;
-			var penetration = (pos2 - dir * radius1) - (pos1 + dir * radius2); //Essentially: _col2.ClosestPoint(pos) - _col.ClosestPoint(otherPos);
+			var penetration = (pos2 - dir * radius1) - (pos1 + dir * radius2); //Essentially: _col2.ClosestPoint(pos1) - _col.ClosestPoint(pos2);
 
 			var rb1 = _col1.GetComponent<RigidBod2D>();
 			var rb2 = _col2.GetComponent<RigidBod2D>();

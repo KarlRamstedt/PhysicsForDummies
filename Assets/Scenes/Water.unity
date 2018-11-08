@@ -905,8 +905,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3f011f3360638234f84dc791d8dc53fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  friction: 0.25
-  bounciness: 0.5
+  friction: 0
+  bounciness: 0.25
   isTrigger: 0
   transform: {fileID: 996318550}
   radius: 0.5

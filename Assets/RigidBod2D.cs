@@ -10,7 +10,7 @@ public class RigidBod2D : MonoBehaviour {
 	public bool useGravity = true;
 	public bool isKinematic = false;
 
-	public Vector2 velocity { //Verlet integration
+	public Vector2 velocity { //Verlet integration | TODO: Try Beeman's algorithm https://embnet.vital-it.ch/MD_tutorial/pages/MD.Part1.html
 		get { return (transform.position.ToVec2()-previousPosition) / Time.fixedDeltaTime; } //V = (pos-prevPos)/T
 		set { previousPosition = transform.position.ToVec2() - value * Time.fixedDeltaTime; } //prevPos = pos - V*T
 	}

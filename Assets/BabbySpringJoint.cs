@@ -30,14 +30,14 @@ public class BabbySpringJoint : MonoBehaviour {
 
 		if (!rb.isKinematic && !connectedBody.isKinematic){
 			var dampingRatio = (connectedBody.velocity - rb.velocity) * damping; //Relative velocity * damping factor
-			var forceMag = force.magnitude;
-			rb.AddForce(Vector2.ClampMagnitude(force + dampingRatio, forceMag)); //Make sure damping can't put force into negatives
-			connectedBody.AddForce(Vector2.ClampMagnitude(-force - dampingRatio, forceMag)); //Note: Mass is taken into account through the use of Force
+			var finalForce = Vector2.ClampMagnitude(force + dampingRatio, force.magnitude); //Make sure damping can't put force into negatives
+			rb.AddForce(finalForce);
+			connectedBody.AddForce(-finalForce); //Note: Mass is taken into account through the use of Force
 		} else if (rb.isKinematic){
 			var dampingRatio = connectedBody.velocity * damping;
 			connectedBody.AddForce(Vector2.ClampMagnitude(-force - dampingRatio, force.magnitude));
 		} else if (connectedBody.isKinematic){
-			var dampingRatio = rb.velocity * damping; //Damping seems kind of off
+			var dampingRatio = rb.velocity * damping; //TODO: Improve damping. Damping is applied to all movement, not only that specific to the spring | https://gamedev.stackexchange.com/questions/105728/how-to-program-a-fully-controllable-spring-damped-motion
 			rb.AddForce(Vector2.ClampMagnitude(force - dampingRatio, force.magnitude));
 		}
 	}

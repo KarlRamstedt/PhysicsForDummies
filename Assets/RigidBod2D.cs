@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 //The most rigid of bods.
 [DisallowMultipleComponent]
@@ -14,7 +15,7 @@ public class RigidBod2D : MonoBehaviour {
 		get { return (transform.position.ToVec2()-previousPosition) / Time.fixedDeltaTime; } //V = (pos-prevPos)/T
 		set { previousPosition = transform.position.ToVec2() - value * Time.fixedDeltaTime; } //prevPos = pos - V*T
 	}
-	public Vector2 previousPosition;
+	[HideInInspector] public Vector2 previousPosition;
 
 	[HideInInspector] public new Transform transform; //Caching for performance
 	void Awake(){
@@ -67,6 +68,7 @@ public class RigidBod2D : MonoBehaviour {
 			return;
 		}
 		var timeDelta = Time.fixedDeltaTime;
+		
 		if (useGravity)
 			force += mass * CollisionManager.gravity; //F = m * a
 		
@@ -87,5 +89,5 @@ public class RigidBod2D : MonoBehaviour {
 //6. Apply half collision/friction
 //7. Advance positions by 0.5dT
 
-//Source: http://www.scitepress.org/Papers/2017/62693/62693.pdf
+//Source: http://www.scitepress.org/Papers/2017/62693/62693.pdf | Verlet with Collisions for Mass Spring Model Simulations - Maciej Kot and Hiroshi Nagahashi
 //Could allegedly remove the need for multiple solverIterations.

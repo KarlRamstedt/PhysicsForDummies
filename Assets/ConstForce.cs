@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Named to avoid conflict with Unity's ConstantForce component.
+/// </summary>
 [RequireComponent(typeof(RigidBod2D))]
-public class ConstantForce : MonoBehaviour {
+public class ConstForce : ForceGenerator {
 
 	public Vector2 force = Vector2.zero;
 
@@ -10,7 +13,7 @@ public class ConstantForce : MonoBehaviour {
 		rb = GetComponent<RigidBod2D>();
 	}
 
-	void FixedUpdate(){
+	public override void GenerateForce(){
 		rb.AddForce(force);
 	}
 }

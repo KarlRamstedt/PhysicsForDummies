@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(RigidBod2D))]
-public class BabbySpringJoint : MonoBehaviour {
+public class BabbySpringJoint : ForceGenerator {
 
 	public RigidBod2D connectedBody;
 	public float springConstant = 9;
@@ -17,7 +17,7 @@ public class BabbySpringJoint : MonoBehaviour {
 			restingLength = (connectedBody.transform.position.ToVec2() - rb.transform.position.ToVec2()).magnitude;
 	}
 
-	void FixedUpdate(){ //Force = springConstant * lengthDelta
+	public override void GenerateForce(){ //Force = springConstant * lengthDelta
 		var delta = connectedBody.transform.position.ToVec2() - rb.transform.position.ToVec2();
 
 		var deltaMag = delta.magnitude;

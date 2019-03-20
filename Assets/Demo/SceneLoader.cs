@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Shitty thrown-together scene-switching utility script.
+/// </summary>
 public class SceneLoader : MonoBehaviour {
 	
 	void Update(){

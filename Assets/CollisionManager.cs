@@ -8,9 +8,10 @@ public class CollisionManager : MonoBehaviour {
 
 	public static Vector2 gravity = new Vector2(0f, -9.8f);
 
+	public List<ForceGenerator> forceGenerators = new List<ForceGenerator>();
+	public List<RigidBod2D> rigidbodies = new List<RigidBod2D>();
 	public List<Constraint> constraints = new List<Constraint>();
 	public List<Collider2DBase> colliders = new List<Collider2DBase>();
-	public List<RigidBod2D> rigidbodies = new List<RigidBod2D>();
 	[Range(1, 99)] public int solverIterations = 9;
 
 	Dictionary<GameObject, List<GameObject>> collisions = new Dictionary<GameObject, List<GameObject>>(); //Does order affect result? | CollisionExit will not run if object is disabled, is that a problem?
@@ -36,30 +37,55 @@ public class CollisionManager : MonoBehaviour {
 #endregion
 
 #region RegisterComponents
-	public void RegisterComponent(RigidBod2D _col){
-		if (!rigidbodies.Contains(_col))
+	public bool RegisterComponent(ForceGenerator _fg){
+		if (!forceGenerators.Contains(_fg)){
+			forceGenerators.Add(_fg);
+			return true;
+		} else
+			return false;
+	}
+	public bool DeRegisterComponent(ForceGenerator _fg){
+		return forceGenerators.Remove(_fg);
+	}
+
+	public bool RegisterComponent(RigidBod2D _col){
+		if (!rigidbodies.Contains(_col)){
 			rigidbodies.Add(_col);
+			return true;
+		} else
+			return false;
 	}
-	public void DeRegisterComponent(RigidBod2D _col){
-		rigidbodies.Remove(_col);
+	public bool DeRegisterComponent(RigidBod2D _col){
+		return rigidbodies.Remove(_col);
 	}
-	public void RegisterComponent(Collider2DBase _col){
-		if (!colliders.Contains(_col))
+
+	public bool RegisterComponent(Collider2DBase _col){
+		if (!colliders.Contains(_col)){
 			colliders.Add(_col);
+			return true;
+		} else
+			return false;
 	}
-	public void DeRegisterComponent(Collider2DBase _col){
-		colliders.Remove(_col);
+	public bool DeRegisterComponent(Collider2DBase _col){
+		return colliders.Remove(_col);
 	}
-	public void RegisterComponent(Constraint _con){
-		if (!constraints.Contains(_con))
+
+	public bool RegisterComponent(Constraint _con){
+		if (!constraints.Contains(_con)){
 			constraints.Add(_con);
+			return true;
+		} else
+			return false;
 	}
-	public void DeRegisterComponent(Constraint _con){
-		constraints.Remove(_con);
+	public bool DeRegisterComponent(Constraint _con){
+		return constraints.Remove(_con);
 	}
 #endregion
 	
 	void FixedUpdate(){ //Runs 50 times per second (by default)
+		for (int i = 0, len = forceGenerators.Count; i < len; i++){
+			forceGenerators[i].GenerateForce();
+		}
 		for (int i = 0, len = rigidbodies.Count; i < len; i++){
 			rigidbodies[i].UpdatePosition();
 		}
